@@ -7,13 +7,16 @@ interface MyAppProps extends AppProps {
   };
 }
 
-const App: React.FC<MyAppProps> = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }: MyAppProps) => {
+  const session = 'session' in pageProps ? pageProps.session : undefined;
+
   return (
-    <SessionProvider session={pageProps.session}>
+    <SessionProvider session={session}>
       <Component {...pageProps} />
     </SessionProvider>
   );
 };
+
 
 
 export default App;
