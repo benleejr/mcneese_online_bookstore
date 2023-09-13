@@ -1,7 +1,13 @@
-import { AppProps } from "next/app";
+import { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 
-const App = ({ Component, pageProps }: AppProps) => {
+interface MyAppProps extends AppProps {
+  pageProps: {
+    session?: any; // Replace 'any' with the actual session type if known
+  };
+}
+
+const App = ({ Component, pageProps }: MyAppProps) => {
   return (
     <SessionProvider session={pageProps.session}>
       <Component {...pageProps} />
