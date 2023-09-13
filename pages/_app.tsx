@@ -7,12 +7,13 @@ interface MyAppProps extends AppProps {
   };
 }
 
-const App = ({ Component, pageProps }: MyAppProps) => {
+const App: React.FC<MyAppProps> = ({ Component, pageProps }) => {
   return (
     <SessionProvider session={pageProps.session}>
       <Component {...pageProps} />
     </SessionProvider>
   );
 };
+
 
 export default App;
