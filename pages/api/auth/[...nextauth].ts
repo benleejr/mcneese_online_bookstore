@@ -14,6 +14,7 @@ const options = {
       clientSecret: process.env.GITHUB_SECRET,
     }),
   ],
+
   adapter: PrismaAdapter(prisma),
-  secret: process.env.SECRET,
+  secret: process.env.JWT_SECRET,
 };
