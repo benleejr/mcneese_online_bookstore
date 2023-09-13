@@ -1,0 +1,164 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+// Books Table
+model Book {
+  id           String     @id @default(cuid())
+  title        String
+  author       String
+  ISBN         String     @unique
+  category     String
+  price        Float
+  language     String?
+  availability Boolean    @default(true)
+  createdAt    DateTime   @default(now()) @map(name: "created_at")
+  updatedAt    DateTime   @updatedAt @map(name: "updated_at")
+  reviews      Review[]
+  orders       Order[]
+  Cart         Cart[]
+  Wishlist     Wishlist[]
+}
+
+// Users Table
+model User {
+  id        String     @id @default(cuid())
+  username  String     @unique
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now()) @map(name: "created_at")
+  updatedAt DateTime   @updatedAt @map(name: "updated_at")
+  orders    Order[]
+  reviews   Review[]
+  chatLogs  ChatLog[]
+  Cart      Cart[]
+  Wishlist  Wishlist[]
+  emailVerified DateTime?
+  image         String?
+  posts         Post[]
+  accounts      Account[]
+  sessions      Session[]
+}
+
+// Orders Table
+model Order {
+  id        String   @id @default(cuid())
+  userId    String
+  bookId    String
+  status    String // Example statuses could be "Pending", "Shipped", "Delivered"
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+  user      User     @relation(fields: [id], references: [id])
+  book      Book     @relation(fields: [bookId], references: [id])
+}
+
+// Reviews Table
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  bookId    String
+  rating    Int // You can set this to be between 1 and 5, for example
+  comment   String?
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  user      User     @relation(fields: [userId], references: [id])
+  book      Book     @relation(fields: [bookId], references: [id])
+}
+
+// Cart Table 
+model Cart {
+  id       String @id @default(cuid())
+  userId   String
+  bookId   String
+  quantity Int
+  user     User   @relation(fields: [userId], references: [id])
+  book     Book   @relation(fields: [bookId], references: [id])
+}
+
+// Wishlist Table
+model Wishlist {
+  id     String @id @default(cuid())
+  userId String
+  bookId String
+  user   User   @relation(fields: [userId], references: [id])
+  book   Book   @relation(fields: [bookId], references: [id])
+}
+
+//CHATBOT LOGS STORAGE
+model ChatLog {
+  id        String   @id @default(cuid())
+  userId    String
+  chatbotId String
+  message   String
+  response  String
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [id], references: [id])
+  chatbot   Chatbot  @relation(fields: [chatbotId], references: [id])
+
+  @@map(name: "chat_logs")
+}
+
+model Chatbot {
+  id        String    @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  chatLogs  ChatLog[]
+
+  @@map(name: "chatbots")
+}
+
+//NEXT-AUTH
+model Post {
+  id        String  @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean @default(false)
+  author    User? @relation(fields:[authorId], references:[id])
+  authorId  String?
+  }
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+
+  user User @relation(fields:[userId], references:[id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  }
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique@map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields:[userId], references:[id], onDelete: Cascade)
+  }
+
+model VerificationToken {
+  id         Int      @id @default(autoincrement())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
