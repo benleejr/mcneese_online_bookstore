@@ -8,15 +8,11 @@ interface MyAppProps extends AppProps {
 }
 
 const App = ({ Component, pageProps }: MyAppProps) => {
-  const session = 'session' in pageProps ? pageProps.session : undefined;
-
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={pageProps.session}>
       <Component {...pageProps} />
     </SessionProvider>
   );
 };
-
-
 
 export default App;
