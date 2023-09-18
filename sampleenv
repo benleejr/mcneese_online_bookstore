@@ -1,0 +1,6 @@
+# .env
+
+# GitHub OAuth
+GITHUB_ID=
+GITHUB_SECRET=
+NEXTAUTH_URL=http://localhost:3000/api/auth
