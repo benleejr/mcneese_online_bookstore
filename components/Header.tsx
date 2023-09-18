@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 
 const Header: React.FC = () => {
+  const [search, setSearch] = useState('');
   const router = useRouter();
   const isActive: (pathname: string) => boolean = (pathname) =>
     router.pathname === pathname;
@@ -12,12 +13,27 @@ const Header: React.FC = () => {
 
   let left = (
     <div className="left">
+      <img 
+        src="/logo.png" 
+        alt="McNeese Online Bookstore" 
+        className="logo"
+      />
       <Link href="/">
         <a className="bold" data-active={isActive('/')}>
           Feed
         </a>
       </Link>
       <style jsx>{`
+      .logo {
+        height: 50px;
+        margin-right: 1rem;
+      }
+      input {
+        margin-right: 1rem;
+        padding: 0.5rem;
+        border: 1px solid var(--geist-foreground);
+        border-radius: 3px;
+      }
         .bold {
           font-weight: bold;
         }
@@ -34,6 +50,30 @@ const Header: React.FC = () => {
 
         a + a {
           margin-left: 1rem;
+        }
+      `}</style>
+    </div>
+  );
+
+  const center = (
+    <div className="center">
+      <input 
+        type="text" 
+        placeholder="Search..." 
+        value={search} 
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <style jsx>{`
+        .center {
+          flex-grow: 1;
+          text-align: center;
+        }
+        input {
+          margin: 0 auto;
+          padding: 0.5rem;
+          border: 1px solid var(--geist-foreground);
+          border-radius: 3px;
+          width: 80%;
         }
       `}</style>
     </div>
@@ -196,6 +236,7 @@ const Header: React.FC = () => {
   return (
     <nav>
       {left}
+      {center}
       {right}
       <style jsx>{`
         nav {
