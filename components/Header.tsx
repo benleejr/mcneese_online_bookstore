@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 
+
 const Header: React.FC = () => {
   const [search, setSearch] = useState('');
   const router = useRouter();
@@ -15,7 +16,7 @@ const Header: React.FC = () => {
     <div className="left">
       <img 
         src="/logo.png" 
-        alt="McNeese Online Bookstore" 
+        alt="McNeese Bookstore" 
         className="logo"
       />
       <Link href="/">
@@ -61,6 +62,11 @@ const Header: React.FC = () => {
         type="text" 
         placeholder="Search..." 
         value={search} 
+
+      
+            
+          
+
         onChange={(e) => setSearch(e.target.value)}
       />
       <style jsx>{`
@@ -76,6 +82,8 @@ const Header: React.FC = () => {
           width: 80%;
         }
       `}</style>
+
+      <button>Search</button>
     </div>
   );
 
@@ -127,7 +135,12 @@ const Header: React.FC = () => {
       <div className="right">
         <Link href="/api/auth/signin">
           <a data-active={isActive('/signup')}>Log in</a>
+          
         </Link>
+        <div className="user-actions">
+            
+            <button className="cart-button">Cart</button>
+          </div>
         <style jsx>{`
           a {
             text-decoration: none;
