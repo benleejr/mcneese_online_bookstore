@@ -1,56 +1,60 @@
+//Header.tsx
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 
-
 const Header: React.FC = () => {
   const [search, setSearch] = useState('');
   const router = useRouter();
-  const isActive: (pathname: string) => boolean = (pathname) =>
-    router.pathname === pathname;
-
   const { data: session, status } = useSession();
 
-  let left = (
+  const navList = (
+    <div className="nav-container">
+      <ul className="nav-list">
+        <li>
+          <Link href="/">
+            <a>Home</a>
+          </Link>
+        </li>
+        <li>
+          <Link href="/about">
+            <a>About Us</a>
+          </Link>
+        </li>
+        <li>
+          <Link href="/contact">
+            <a>Contact</a>
+          </Link>
+        </li>
+        <li className="dropdown">
+          Books
+          <ul className="dropdown-content">
+            <li><Link href="/books?category=Science"><a>Science</a></Link></li>
+            <li><Link href="/books?category=Arts"><a>Arts</a></Link></li>
+            <li><Link href="/books?category=History"><a>History</a></Link></li>
+            {/* Add more categories as needed */}
+          </ul>
+        </li>
+        <li>
+          Stationery
+          <ul className="dropdown-content">
+            <li><Link href="/stationery?category=Pens"><a>Pens</a></Link></li>
+            <li><Link href="/stationery?category=Notebooks"><a>Notebooks</a></Link></li>
+            {/* Add more categories as needed */}
+          </ul>
+        </li>
+      </ul>
+    </div>
+  );
+
+  const left = (
     <div className="left">
-      <img 
-        src="/logo.png" 
-        alt="McNeese Bookstore" 
-        className="logo"
-      />
-      <Link href="/">
-        <a className="bold" data-active={isActive('/')}>
-          Feed
-        </a>
-      </Link>
+      <img src="/logo.png" alt="McNeese Bookstore" className="logo" />
       <style jsx>{`
-      .logo {
-        height: 50px;
-        margin-right: 1rem;
-      }
-      input {
-        margin-right: 1rem;
-        padding: 0.5rem;
-        border: 1px solid var(--geist-foreground);
-        border-radius: 3px;
-      }
-        .bold {
-          font-weight: bold;
-        }
-
-        a {
-          text-decoration: none;
-          color: var(--geist-foreground);
-          display: inline-block;
-        }
-
-        .left a[data-active='true'] {
-          color: gray;
-        }
-
-        a + a {
-          margin-left: 1rem;
+        .logo {
+          height: 50px;
+          flex-grow: 1;
         }
       `}</style>
     </div>
@@ -58,208 +62,100 @@ const Header: React.FC = () => {
 
   const center = (
     <div className="center">
-      <input 
-        type="text" 
-        placeholder="Search..." 
-        value={search} 
-
-      
-            
-          
-
+      <input
+        type="text"
+        placeholder="Search..."
+        value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
+      <button className="search-button">🔍</button>
       <style jsx>{`
         .center {
-          flex-grow: 1;
-          text-align: center;
+          display: flex;
+          flex-grow: 2;
         }
         input {
-          margin: 0 auto;
+          flex-grow: 1;
           padding: 0.5rem;
           border: 1px solid var(--geist-foreground);
           border-radius: 3px;
-          width: 80%;
+        }
+        .search-button {
+          background-color: #ffffff;
+          border: 1px solid var(--geist-foreground);
+          border-radius: 3px;
+          cursor: pointer;
         }
       `}</style>
-
-      <button>Search</button>
     </div>
   );
 
-  let right = null;
-
-  if (status === 'loading') {
-    left = (
-      <div className="left">
-        <Link href="/">
-          <a className="bold" data-active={isActive('/')}>
-            Feed
-          </a>
-        </Link>
-        <style jsx>{`
-          .bold {
-            font-weight: bold;
-          }
-
-          a {
-            text-decoration: none;
-            color: var(--geist-foreground);
-            display: inline-block;
-          }
-
-          .left a[data-active='true'] {
-            color: gray;
-          }
-
-          a + a {
-            margin-left: 1rem;
-          }
-        `}</style>
-      </div>
-    );
-    
-    right = (
-      <div className="right">
-        <p>Validating session ...</p>
-        <style jsx>{`
-          .right {
-            margin-left: auto;
-          }
-        `}</style>
-      </div>
-    );
-  }
-
-  if (!session) {
-    right = (
-      <div className="right">
-        <Link href="/api/auth/signin">
-          <a data-active={isActive('/signup')}>Log in</a>
-          
-        </Link>
-        <div className="user-actions">
-            
-            <button className="cart-button">Cart</button>
-          </div>
-        <style jsx>{`
-          a {
-            text-decoration: none;
-            color: var(--geist-foreground);
-            display: inline-block;
-          }
-
-          a + a {
-            margin-left: 1rem;
-          }
-
-          .right {
-            margin-left: auto;
-          }
-
-          .right a {
-            border: 1px solid var(--geist-foreground);
-            padding: 0.5rem 1rem;
-            border-radius: 3px;
-          }
-        `}</style>
-      </div>
-    );
-  }
-
-  if (session) {
-    left = (
-      <div className="left">
-        <Link href="/">
-          <a className="bold" data-active={isActive('/')}>
-            Feed
-          </a>
-        </Link>
-        <Link href="/drafts">
-          <a data-active={isActive('/drafts')}>My drafts</a>
-        </Link>
-        <style jsx>{`
-          .bold {
-            font-weight: bold;
-          }
-
-          a {
-            text-decoration: none;
-            color: var(--geist-foreground);
-            display: inline-block;
-          }
-
-          .left a[data-active='true'] {
-            color: gray;
-          }
-
-          a + a {
-            margin-left: 1rem;
-          }
-        `}</style>
-      </div>
-    );
-    right = (
-      <div className="right">
-        <p>
-          {session.user.name} ({session.user.email})
-        </p>
-        <Link href="/create">
-          <button>
-            <a>New post</a>
-          </button>
-        </Link>
-        <button onClick={() => signOut()}>
-          <a>Log out</a>
-        </button>
-        <style jsx>{`
-          a {
-            text-decoration: none;
-            color: var(--geist-foreground);
-            display: inline-block;
-          }
-
-          p {
-            display: inline-block;
-            font-size: 13px;
-            padding-right: 1rem;
-          }
-
-          a + a {
-            margin-left: 1rem;
-          }
-
-          .right {
-            margin-left: auto;
-          }
-
-          .right a {
-            border: 1px solid var(--geist-foreground);
-            padding: 0.5rem 1rem;
-            border-radius: 3px;
-          }
-
-          button {
-            border: none;
-          }
-        `}</style>
-      </div>
-    );
-  }
-
-  return (
-    <nav>
-      {left}
-      {center}
-      {right}
+  const right = (
+    <div className="right">
+      <button className="cart-button">🛒</button>
+      <button className="login-button">Login</button>
       <style jsx>{`
-        nav {
-          display: flex;
-          padding: 2rem;
-          align-items: center;
+        .cart-button, .login-button {
+          background-color: #ffffff;
+          border: none;
+          cursor: pointer;
+          font-size: 1.5rem;
+          margin-left: 20px;  // Adding margin to space it from the search icon
+        }
+        .login-button {
+          font-size: 1rem;
         }
       `}</style>
-    </nav>
+    </div>
+  );
+
+  return (
+    <header className="header">
+      <div className="flex-container">
+        {left}
+        {center}
+        {right}
+      </div>
+      <nav className="main-nav">
+        {navList}
+      </nav>
+      <style jsx>{`
+        .header {
+          background-color: #00509E;
+        }
+        .flex-container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem;
+        }
+        .nav-container {
+          display: flex;
+          justify-content: space-evenly;
+          background-color: #003366;
+          padding: 0.5rem 0;
+        }
+        .nav-list {
+          display: flex;
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+          justify-content: flex-end;  // This line
+        }
+        .nav-list li {
+          margin: 0 15px;
+        }
+        .dropdown-content {
+          display: none;
+          opacity: 0;
+          transition: opacity 0.3s ease;  // Animation here
+        }
+        .dropdown:hover .dropdown-content {
+          display: block;
+          opacity: 1;  // Animation here
+        }
+      `}</style>
+    </header>
   );
 };
 

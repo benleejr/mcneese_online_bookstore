@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import Header from "./Header";
-import Footer from "../pages/footer";
+import Footer from "./Footer";
 type Props = {
   children: ReactNode;
 };
@@ -41,7 +41,13 @@ const Layout: React.FC<Props> = (props) => (
       }
     `}</style>
     <style jsx>{`
+      .container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
       .layout {
+        flex: 1;
         padding: 0 2rem;
       }
     `}</style>

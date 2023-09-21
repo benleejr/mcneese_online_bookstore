@@ -1,78 +1,89 @@
 import React from "react";
-import { GetStaticProps } from "next";
 import Layout from "../components/Layout";
+import { GetServerSideProps } from 'next';
+import { PrismaClient } from '@prisma/client';
 import Post, { PostProps } from "../components/Post";
 
-// Sample data for the "New Releases" section (replace with actual data)
-const newReleases: PostProps[] = [
-  {
-    id: 1,
-    title: "New Book 1",
-    author: "Author 1",
-    content: "Lorem ipsum...",
-  },
-  {
-    id: 2,
-    title: "New Book 2",
-    author: "Author 2",
-    content: "Lorem ipsum...",
-  },
-];
+export const getServerSideProps: GetServerSideProps = async () => {
+  const prisma = new PrismaClient();
 
-const Blog: React.FC = () => {
+  const books = await prisma.book.findMany();
+
+  // Close the database connection
+  await prisma.$disconnect();
+
+  return {
+    props: {
+      books: books.map((book) => ({
+        title: book.title,
+        author: book.author,
+        content: '', // you can add more fields as needed
+      })),
+    },
+  };
+};
+
+interface BlogProps {
+  books: PostProps[];
+}
+
+const Blog: React.FC<BlogProps> = ({ books }) => {
   return (
     <Layout>
       <div className="page">
         {/* Header */}
-        <header>
+        <header className="header">
           <nav>
-            <ul>
-              <li><a href="#">Books</a></li>
-              <li><a href="#">Stationery</a></li>
-              <li><a href="#">Fiction</a></li>
-              <li><a href="#">Nonfiction</a></li>
-              <li><a href="#">Subjects</a></li>
+            <ul className="nav-list">
+              {/* ... */}
             </ul>
           </nav>
-          
-          
-          
         </header>
-
         {/* Body */}
-        <main>
-<<<<<<< HEAD
-          <section className="banner">
-            {/* Scrolling banner content */}
-          </section>
+        <main className="main-content">
           <section className="new-releases">
-            <h2>New Releases</h2>
-            <div className="new-release-books">
-              {newReleases.map((post) => (
-                <div key={post.id} className="book">
-                  <h3>{post.title}</h3>
-                  <p>Author: {post.author}</p>
-                  {/* You can add content here */}
-                </div>
-              ))}
-=======
-          {props.feed.map((post) => (
-            <div key={post.id} className="post">
-              <Post post={post} />
-              <p>Test</p>
->>>>>>> 18846f859f69fb06d56eb4b76da83916bb090855
-            </div>
-          </section>
-          <section className="product-categories">
-            {/* Product listings by categories */}
+            {books.map((book, index) => (
+              <div key={index} className="post">
+                <Post post={book} />
+                <p>Test</p>
+              </div>
+            ))}
           </section>
         </main>
 
-        
-       
-
+        {/* Styles */}
         <style jsx>{`
-          /* Add your CSS styles here */
+          .page {
+            margin: auto;
+            max-width: 1200px;
+            padding: 20px;
+          }
+          .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+          }
+          .nav-list {
+            display: flex;
+            gap: 20px;
+          }
+          .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+          }
+          .new-releases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+          }
+          .post {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+          }
         `}</style>
       </div>
     </Layout>
