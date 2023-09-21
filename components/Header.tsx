@@ -118,6 +118,7 @@ const Header: React.FC = () => {
         `}</style>
       </div>
     );
+    
     right = (
       <div className="right">
         <p>Validating session ...</p>

@@ -41,6 +41,7 @@ const Blog: React.FC = () => {
 
         {/* Body */}
         <main>
+<<<<<<< HEAD
           <section className="banner">
             {/* Scrolling banner content */}
           </section>
@@ -54,6 +55,12 @@ const Blog: React.FC = () => {
                   {/* You can add content here */}
                 </div>
               ))}
+=======
+          {props.feed.map((post) => (
+            <div key={post.id} className="post">
+              <Post post={post} />
+              <p>Test</p>
+>>>>>>> 18846f859f69fb06d56eb4b76da83916bb090855
             </div>
           </section>
           <section className="product-categories">
