@@ -8,8 +8,6 @@ import { useSession } from 'next-auth/react';
 import prisma from '../../lib/prisma';
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  console.log("Fetching post with id:", params?.id); // Debug line
-
   const post = await prisma.post.findUnique({
     where: {
       id: String(params?.id),
@@ -21,20 +19,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
-  console.log("Found post:", post); // Debug line
-  
   if (!post) {
-    console.log("Post not found, returning 404"); // Debug line
-    return {
-      notFound: true,
-    };
+    return { notFound: true }; // This will return a 404 page
   }
 
   return {
-    props: { post },
+    props: { ...post },
   };
 };
-
 
 
 async function publishPost(id: string): Promise<void> {
@@ -42,6 +34,12 @@ async function publishPost(id: string): Promise<void> {
     method: 'PUT',
   });
   await Router.push('/');
+}
+async function deletePost(id: string): Promise<void> {
+  await fetch(`/api/post/${id}`, {
+    method: 'DELETE',
+  });
+  Router.push('/');
 }
 
 const Post: React.FC<PostProps> = (props) => {
@@ -55,6 +53,7 @@ const Post: React.FC<PostProps> = (props) => {
   if (!props.published) {
     title = `${title} (Draft)`;
   }
+  
   return (
     <Layout>
       <div>
@@ -64,6 +63,11 @@ const Post: React.FC<PostProps> = (props) => {
         {!props.published && userHasValidSession && postBelongsToUser && (
           <button onClick={() => publishPost(props.id)}>Publish</button>
         )}
+        {
+          userHasValidSession && postBelongsToUser && (
+            <button onClick={() => deletePost(props.id)}>Delete</button>
+          )
+        }
       </div>
       <style jsx>{`
         .page {
@@ -90,4 +94,4 @@ const Post: React.FC<PostProps> = (props) => {
   );
 };
 
-export default Post
+export default Post;
