@@ -1,94 +1,74 @@
-//pages/index.tsx
-import React from "react";
-import Layout from "../components/Layout";
-import { GetServerSideProps } from 'next';
-import { PrismaClient } from '@prisma/client';
-import Post, { PostProps } from "../components/Post";
+// pages/index.tsx
+import React from 'react';
+import { GetStaticProps } from 'next';
+import Layout from '../components/Layout';
+import Post, {PostProps} from '../components/Post';
+import prisma from '../lib/prisma'; // Assuming you have a file named prisma.ts that exports your Prisma client
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const prisma = new PrismaClient();
-
-  const books = await prisma.book.findMany();
-
-  // Close the database connection
-  await prisma.$disconnect();
-
-  return {
-    props: {
-      books: books.map((book) => ({
-        title: book.title,
-        author: book.author,
-        content: '', // you can add more fields as needed
-      })),
+// Function to get the feed from the database
+const getFeedFromDatabase = async () => {
+  const feed = await prisma.post.findMany({
+    where: {
+      published: true,
     },
+    include: {
+      author: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
+    orderBy: {
+      id: 'desc',
+    },
+  });
+
+  return feed;
+};
+
+// Static generation for the feed
+export const getStaticProps: GetStaticProps = async () => {
+  const feed = await getFeedFromDatabase();
+  return {
+    props: { feed },
+    revalidate: 10,
   };
 };
 
-interface BlogProps {
-  books: PostProps[];
-}
+type Props = {
+  feed: PostProps[];
+};
 
-const Blog: React.FC<BlogProps> = ({ books }) => {
+const Index: React.FC<Props> = (props) => {
   return (
     <Layout>
       <div className="page">
-        {/* Header */}
-        <header className="header">
-          <nav>
-            <ul className="nav-list">
-              {/* ... */}
-            </ul>
-          </nav>
-        </header>
-        {/* Body */}
-        <main className="main-content">
-          <section className="new-releases">
-            {books.map((book, index) => (
-              <div key={index} className="post">
-                <Post post={book} />
-                <p>Test</p>
-              </div>
-            ))}
-          </section>
+        <h1>McNeese Bookstore</h1>
+        <main>
+          {props.feed.map((post) => (
+            <div key={post.id} className="post">
+              <Post post={post} />
+            </div>
+          ))}
         </main>
-
-        {/* Styles */}
-        <style jsx>{`
-          .page {
-            margin: auto;
-            max-width: 1200px;
-            padding: 20px;
-          }
-          .header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 0;
-          }
-          .nav-list {
-            display: flex;
-            gap: 20px;
-          }
-          .main-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-          }
-          .new-releases {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-          }
-          .post {
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 8px;
-          }
-        `}</style>
       </div>
+      <style jsx>{`
+        .post {
+          background: white;
+          transition: box-shadow 0.1s ease-in;
+        }
+
+        .post:hover {
+          box-shadow: 1px 1px 3px #aaa;
+        }
+
+        .post + .post {
+          margin-top: 2rem;
+        }
+      `}</style>
     </Layout>
   );
 };
 
-export default Blog;
+export default Index;
