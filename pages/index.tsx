@@ -1,3 +1,4 @@
+//pages/index.tsx
 import React from "react";
 import Layout from "../components/Layout";
 import { GetServerSideProps } from 'next';

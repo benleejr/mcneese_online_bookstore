@@ -1,0 +1,4 @@
+#PRISMA
+
+npx prisma generate to re-establish link between schema.prisma and .env file
+npx prisma studio - run GUI for modifying database
