@@ -1,6 +1,6 @@
 // pages/contact.tsx
 
-import ContactPage from "../components/ContactPage";
+import ContactPage from "./ContactPage";
 
 const Contact: React.FC = () => {
   return <ContactPage />;
