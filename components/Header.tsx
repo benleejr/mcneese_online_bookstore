@@ -140,7 +140,9 @@ const Header: React.FC = () => {
         </Link>
         <div className="user-actions">
             
-            <button className="cart-button">Cart</button>
+        <Link href="/shopping-cart">
+              <a className="cart-button">Cart</a>
+        </Link>
           </div>
         <style jsx>{`
           a {
