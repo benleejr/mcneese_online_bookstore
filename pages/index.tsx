@@ -1,99 +1,74 @@
-import React, { useState } from "react";
-import { GetStaticProps } from "next";
-import Layout from "../components/Layout";
-import Post, { PostProps } from "../components/Post";
+// pages/index.tsx
+import React from 'react';
+import { GetStaticProps } from 'next';
+import Layout from '../components/Layout';
+import Post, {PostProps} from '../components/Post';
+import prisma from '../lib/prisma'; // Assuming you have a file named prisma.ts that exports your Prisma client
 
-// Sample data for different genres/categories (replace with actual data)
-const genresData: Record<string, PostProps[]> = {
-  fiction: [
-    {
-      id: '1',
-      title: "Fiction Book 1",
-      author: "Author 1",
-      content: "Lorem ipsum...",
+// Function to get the feed from the database
+const getFeedFromDatabase = async () => {
+  const feed = await prisma.post.findMany({
+    where: {
+      published: true,
     },
-    // Add more fiction books as needed
-  ],
-  nonfiction: [
-    {
-      id: '2',
-      title: "Nonfiction Book 1",
-      author: "Author 1",
-      content: "Lorem ipsum...",
+    include: {
+      author: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
     },
-    // Add more nonfiction books as needed
-  ],
-  // Add more genres/categories with their respective data
+    orderBy: {
+      id: 'desc',
+    },
+  });
+
+  return feed;
 };
 
-const Blog: React.FC = () => {
-  const [selectedGenre, setSelectedGenre] = useState<string>("fiction");
-
-  const handleGenreChange = (genre: string) => {
-    setSelectedGenre(genre);
+// Static generation for the feed
+export const getStaticProps: GetStaticProps = async () => {
+  const feed = await getFeedFromDatabase();
+  return {
+    props: { feed },
+    revalidate: 10,
   };
+};
 
-  const currentGenreData = genresData[selectedGenre] || [];
+type Props = {
+  feed: PostProps[];
+};
 
+const Index: React.FC<Props> = (props) => {
   return (
     <Layout>
       <div className="page">
-        {/* Header */}
-        <header>
-          <nav>
-            <ul>
-              <li><a href="#">Books</a></li>
-              <li><a href="#">Stationery</a></li>
-              {/* Add more navigation links as needed */}
-            </ul>
-          </nav>
-        </header>
-
-        {/* Body */}
+        <h1>McNeese Bookstore</h1>
         <main>
-          <section className="banner">
-            {/* Scrolling banner content */}
-          </section>
-          <section className="genre-selection">
-            {/* Genre selection buttons */}
-            <button onClick={() => handleGenreChange("fiction")}>Fiction</button>
-            <button onClick={() => handleGenreChange("nonfiction")}>Nonfiction</button>
-            {/* Add more genre buttons as needed */}
-          </section>
-          <section className="genre-content">
-            <h2>{selectedGenre.charAt(0).toUpperCase() + selectedGenre.slice(1)}</h2>
-            <div className="genre-books">
-              {currentGenreData.map((post) => (
-                <div key={post.id} className="book">
-                  <h3>{post.title}</h3>
-                  <p>Author: {post.author}</p>
-                  {/* You can add content here */}
-                </div>
-              ))}
+          {props.feed.map((post) => (
+            <div key={post.id} className="post">
+              <Post post={post} />
             </div>
-          </section>
+          ))}
         </main>
-
-        {/* Add your CSS styles here */}
-        <style jsx>{`
-          /* Add your CSS styles here */
-          .genre-selection {
-            /* Style for the genre selection buttons */
-          }
-          
-          .genre-content {
-            /* Style for the genre content section */
-          }
-
-          .genre-books {
-            /* Style for individual books in the genre */
-          }
-
-          /* Add more styles as needed */
-        `}</style>
       </div>
+      <style jsx>{`
+        .post {
+          background: white;
+          transition: box-shadow 0.1s ease-in;
+        }
+
+        .post:hover {
+          box-shadow: 1px 1px 3px #aaa;
+        }
+
+        .post + .post {
+          margin-top: 2rem;
+        }
+      `}</style>
     </Layout>
   );
 };
- 
-export default Blog;
+
+export default Index;
