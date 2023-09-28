@@ -1,6 +1,6 @@
 // pages/about.tsx
 
-import AboutPage from '../components/AboutPage';
+import AboutPage from './AboutPage';
 
 const About: React.FC = () => {
   return <AboutPage />;
