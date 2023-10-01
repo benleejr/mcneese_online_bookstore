@@ -15,6 +15,7 @@ model Book {
   id           String     @id @default(cuid())
   title        String
   author       String
+  cloudinaryImageUrl String
   ISBN         String     @unique
   category     String
   price        Float
