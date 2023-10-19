@@ -69,7 +69,7 @@ const Header: React.FC = () => {
       </div>
       <nav className="nav-container">
         <ul className="nav-list">
-          <li><a href="index.tsx">Home</a></li>
+          <li><a href="/">Home</a></li>
           <li><a href="#">About Us</a></li>
           <li className="dropdown">
             Books
