@@ -1,21 +1,26 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import Router from 'next/router';
+import cloudinary from '../cloudinaryConfig';
 
-const Draft: React.FC = () => {
+const Create: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [type, setType] = useState('book');
+  const [image, setImage] = useState('');
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
-      const body = { title, content };
+      const uploadResponse = await cloudinary.v2.uploader.upload(image, { public_id: title });
+      const imageUrl = uploadResponse.secure_url;
+      const body = { title, content, type, imageUrl };
       await fetch('/api/post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      await Router.push('/drafts');
+      await Router.push('/');
     } catch (error) {
       console.error(error);
     }
@@ -25,7 +30,7 @@ const Draft: React.FC = () => {
     <Layout>
       <div>
         <form onSubmit={submitData}>
-          <h1>New Draft</h1>
+          <h1>New Post</h1>
           <input
             autoFocus
             onChange={(e) => setTitle(e.target.value)}
@@ -40,7 +45,35 @@ const Draft: React.FC = () => {
             rows={8}
             value={content}
           />
-          <input disabled={!content || !title} type="submit" value="Create" />
+          <div>
+            <input
+              type="radio"
+              id="book"
+              name="type"
+              value="book"
+              checked={type === 'book'}
+              onChange={(e) => setType(e.target.value)}
+            />
+            <label htmlFor="book">Book</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              id="stationery"
+              name="type"
+              value="stationery"
+              checked={type === 'stationery'}
+              onChange={(e) => setType(e.target.value)}
+            />
+            <label htmlFor="stationery">Stationery</label>
+          </div>
+          <input
+            onChange={(e) => setImage(e.target.value)}
+            placeholder="Image URL"
+            type="text"
+            value={image}
+          />
+          <input disabled={!content || !title || !image} type="submit" value="Create" />
           <a className="back" href="#" onClick={() => Router.push('/')}>
             or Cancel
           </a>
@@ -78,4 +111,4 @@ const Draft: React.FC = () => {
   );
 };
 
-export default Draft;
+export default Create;

@@ -26,6 +26,7 @@ model Book {
   orders       Order[]
   Cart         Cart[]
   Wishlist     Wishlist[]
+  imageURL     String?
 }
 
 // Users Table
@@ -45,6 +46,7 @@ model User {
   chatLogs  ChatLog[]
   Cart      Cart[]
   Wishlist  Wishlist[]
+  isAdmin Boolean @default(false)
 }
 
 // Orders Table

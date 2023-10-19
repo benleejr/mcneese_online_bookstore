@@ -1,14 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Router from 'next/router';
+import { useSession } from 'next-auth/react';
+import axios, {isCancel, AxiosError} from 'axios';
 
 const Header: React.FC = () => {
   const [search, setSearch] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    console.log(session);
+    if (session?.user?.email) {
+      axios.get('/api/user', { params: { email: session.user.email } })
+        .then(response => {
+          console.log(response.data);
+          const user = response.data;
+          setIsAdmin(user?.isAdmin ?? false);
+        })
+        .catch(error => {
+          console.error('Error fetching user data:', error);
+        });
+    }
+  }, [session]);
 
   return (
     <header className="header">
       <div className="flex-container">
-        <div className="left">
-          <img src="/logo.png" alt="McNeese Logo" className="logo" />
+        <div className="left" onClick={() => Router.push('/')}>
+          <Link href="/">
+            <img src="logo.svg" alt="McNeese Logo" className="logo" />
+          </Link>
         </div>
         <div className="center">
           <input
@@ -21,7 +43,28 @@ const Header: React.FC = () => {
         </div>
         <div className="right">
           <button className="cart-button">🛒</button>
-          <button className="login-button">Login</button>
+          {session ? (
+            <div className="dropdown">
+              <button className="login-button">Profile</button>
+              <ul className="dropdown-content">
+                <li>
+                  <Link href="/profile">Profile</Link>
+                </li>
+                {isAdmin && (
+                  <li>
+                    <Link href="/Add">Add New Store Items</Link>
+                  </li>
+                )}
+                <li>
+                  <Link href="/api/auth/signout">Logout</Link>
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <Link href="/api/auth/signin">
+              <button className="login-button">Login</button>
+            </Link>
+          )}
         </div>
       </div>
       <nav className="nav-container">
@@ -96,18 +139,30 @@ const Header: React.FC = () => {
         .nav-list li {
           position: relative;
         }
+
+        .dropdown-content, .dropdown-content li {
+          margin: 0;
+          padding: 0;
+        }
+        .dropdown {
+          position: relative;
+          display: inline-block; /* Ensures that the dropdown is only as wide as its trigger */
+        }        
         .dropdown-content {
+          list-style-type: none;
           display: none;
           position: absolute;
-          top: 100%;
+          top: calc(100% - 1px);
           left: 0;
           background-color: white;
-          z-index: 1;
-        }
+          z-index: 1000; /* Higher value to ensure it appears above other elements */
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Optional: Adds a shadow for better distinction */
+          border: 1px solid #ccc; /* Optional: Adds a border */
+        }        
         .dropdown:hover .dropdown-content {
-          display: flex;
-          flex-direction: column;
+          display: block; /* Changed from flex to block for default stacking of list items */
         }
+        
       `}</style>
     </header>
   );
