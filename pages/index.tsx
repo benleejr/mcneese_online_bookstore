@@ -3,7 +3,7 @@ import React from 'react';
 import { GetStaticProps } from 'next';
 import Layout from '../components/Layout';
 import Post, {PostProps} from '../components/Post';
-import prisma from '../lib/prisma'; // Assuming you have a file named prisma.ts that exports your Prisma client
+import prisma from '../lib/prisma'; 
 
 // Function to get the feed from the database
 const getFeedFromDatabase = async () => {

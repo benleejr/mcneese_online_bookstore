@@ -15,7 +15,6 @@ model Book {
   id           String     @id @default(cuid())
   title        String
   author       String
-  cloudinaryImageUrl String
   ISBN         String     @unique
   category     String
   price        Float
@@ -27,6 +26,25 @@ model Book {
   orders       Order[]
   Cart         Cart[]
   Wishlist     Wishlist[]
+  imageURL     String?
+  description  String?
+  publisher    String?
+  publishedYear Int?
+}
+
+// Stationery Table
+model Stationery {
+  id           String     @id @default(cuid())
+  name         String
+  brand        String
+  price        Float
+  availability Boolean    @default(true)
+  createdAt    DateTime   @default(now()) @map(name: "created_at")
+  updatedAt    DateTime   @updatedAt @map(name: "updated_at")
+  imageURL     String?
+  description  String?
+  category     String
+  stock        Int        @default(0)
 }
 
 // Users Table
@@ -46,6 +64,7 @@ model User {
   chatLogs  ChatLog[]
   Cart      Cart[]
   Wishlist  Wishlist[]
+  isAdmin Boolean @default(false)
 }
 
 // Orders Table

@@ -4,3 +4,14 @@
 GITHUB_ID=
 GITHUB_SECRET=
 NEXTAUTH_URL=http://localhost:3000/api/auth
+
+JWT_SECRET=
+
+#Postgres
+POSTGRES_PRISMA_URL=postgres://default:eKf5LsNaw1FX@ep-small-credit-48221590-pooler.us-east-2.postgres.vercel-storage.com:5432/verceldb?pgbouncer=true&connect_timeout=15
+POSTGRES_URL_NON_POOLING=postgres://default:eKf5LsNaw1FX@ep-small-credit-48221590.us-east-2.postgres.vercel-storage.com/verceldb
+
+#Cloudinary
+CLOUD_NAME=dzzzdfex8
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
