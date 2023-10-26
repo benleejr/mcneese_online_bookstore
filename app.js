@@ -1,3 +1,6 @@
+require("dotenv").config();
+const cors = require("cors");
+const cloudinary = require("cloudinary").v2;
 const express = require('express');
 const multer = require('multer');
 const csv = require('csv-parser');

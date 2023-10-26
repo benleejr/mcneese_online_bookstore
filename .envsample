@@ -12,6 +12,6 @@ POSTGRES_PRISMA_URL=postgres://default:eKf5LsNaw1FX@ep-small-credit-48221590-poo
 POSTGRES_URL_NON_POOLING=postgres://default:eKf5LsNaw1FX@ep-small-credit-48221590.us-east-2.postgres.vercel-storage.com/verceldb
 
 #Cloudinary
-CLOUD_NAME=dzzzdfex8
+CLOUDINARY_CLOUD_NAME=dzzzdfex8
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=

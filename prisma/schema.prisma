@@ -30,6 +30,7 @@ model Book {
   description  String?
   publisher    String?
   publishedYear Int?
+  stock        Int        @default(0)
 }
 
 // Stationery Table
