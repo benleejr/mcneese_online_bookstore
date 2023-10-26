@@ -26,7 +26,7 @@ model Book {
   orders       Order[]
   Cart         Cart[]
   Wishlist     Wishlist[]
-  imageURL     String?
+  imageURL     String
   description  String?
   publisher    String?
   publishedYear Int?

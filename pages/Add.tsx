@@ -22,6 +22,7 @@ const Create: React.FC = () => {
       return;
     }
 
+    //Add image to multer
     const formDataObj = new FormData();
     formDataObj.append('file', fileInputRef.current.files[0]);
       
@@ -41,11 +42,17 @@ const Create: React.FC = () => {
       const uploadData = await uploadResponse.json();
       const imageUrl = uploadData.secure_url;
 
+      for(let key of formDataObj.keys()) {
+        formDataObj.delete(key);
+      }
+
       formDataObj.append('imageUrl', imageUrl);
       formDataObj.append('type', type);    
       Object.keys(formData).forEach(key => {
         formDataObj.append(key, formData[key]);
       });
+
+      console.log([...formDataObj.entries()]);
 
       const saveResponse = await fetch('/api/save', {
           method: 'POST',
