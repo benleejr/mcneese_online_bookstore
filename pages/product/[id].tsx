@@ -92,10 +92,11 @@ const Product: React.FC<ProductProps> = ({ product }) => {
         .product-page {
           display: flex;
           padding: 2rem;
-          flex-direction: column;
-          align-items: center;
+          flex-direction: row;  // Changed from 'column' to 'row'
+          align-items: flex-start;  // Align to the top
           max-width: 1200px;
           margin: auto;
+          gap: 2rem;  
         }
         .image-slider {
           width: 100%;
@@ -105,16 +106,24 @@ const Product: React.FC<ProductProps> = ({ product }) => {
         .slide {
           position: relative;
           overflow: hidden;
+          display: flex;  
+          justify-content: center;  
+          align-items: center; 
         }
         .slide img {
           width: 100%;
           display: block;
           max-height: 400px;
-          object-fit: cover;
+          object-fit: contain;
         }
         .product-info {
           width: 100%;
           max-width: 600px;
+        }
+        @media (max-width: 768px) {
+          .product-page {
+            flex-direction: column;
+          }
         }
       `}</style>
     </Layout>
