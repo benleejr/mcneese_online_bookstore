@@ -1,4 +1,7 @@
 #PRISMA
 
-npx prisma generate to re-establish link between schema.prisma and .env file
+npx prisma generate to re-establish link between schema.prisma and .env file. Kill npm local dev and prisma process before running.
 npx prisma studio - run GUI for modifying database
+npx prisma db push - try out a prototype
+
+npm install react-slick slick-carousel

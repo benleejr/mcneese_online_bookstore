@@ -7,7 +7,9 @@ import { useRef } from 'react';
 const Create: React.FC = () => {
   const [formData, setFormData] = useState({});
   const [type, setType] = useState('book');
-  const fileInputRef = useRef(null);
+  
+  const primaryFileInputRef = useRef(null);
+  const otherFilesInputRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -17,36 +19,64 @@ const Create: React.FC = () => {
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
-    if (!fileInputRef.current || !fileInputRef.current.files || fileInputRef.current.files.length === 0) {
-      console.error('No file selected');
+    if (!primaryFileInputRef.current || !primaryFileInputRef.current.files || primaryFileInputRef.current.files.length === 0) {
+      console.error('No image selected');
       return;
     }
 
     //Add image to multer
     const formDataObj = new FormData();
-    formDataObj.append('file', fileInputRef.current.files[0]);
-      
+
     try {
-      const uploadResponse = await fetch('/api/upload', {
+      // Process primary image
+      
+      const primaryFormData = new FormData();
+      primaryFormData.append('file', primaryFileInputRef.current.files[0]);
+
+      const primaryUploadResponse = await fetch('/api/upload', {
         method: 'POST',
-        body: formDataObj,
+        body: primaryFormData,
       });
-  
-      // Error Checking
-      if (!uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
+
+      if (!primaryUploadResponse.ok) {
+        const uploadData = await primaryUploadResponse.json();
         console.error('Error saving data:', uploadData.error);
         return;
       } 
 
-      const uploadData = await uploadResponse.json();
-      const imageUrl = uploadData.secure_url;
+      const primaryUploadData = await primaryUploadResponse.json();
+      const primaryImageURL = primaryUploadData.secure_url;
+      formDataObj.append('primaryImageURL', primaryImageURL);
+      
 
-      for(let key of formDataObj.keys()) {
-        formDataObj.delete(key);
+    if (otherFilesInputRef.current && otherFilesInputRef.current.files && otherFilesInputRef.current.files.length > 0) {
+      const otherImageURLs = [];
+      for (let i = 0; i < otherFilesInputRef.current.files.length; i++) {
+        const otherFormData = new FormData();
+        otherFormData.append('file', otherFilesInputRef.current.files[i]);
+    
+        const otherUploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: otherFormData,
+        });
+    
+        if (!otherUploadResponse.ok) {
+          const uploadData = await otherUploadResponse.json();
+          console.error('Error saving data:', uploadData.error);
+          return;
+        }
+    
+        const otherUploadData = await otherUploadResponse.json();
+        const otherImageURL = otherUploadData.secure_url;
+        otherImageURLs.push(otherImageURL);
       }
+      formDataObj.append('otherImageURLs', JSON.stringify(otherImageURLs));  // Convert array to string to make it compatible with the PostgreSQL database.
+    }
+         
+    /*for(let key of formDataObj.keys()) {
+        formDataObj.delete(key);
+    }*/
 
-      formDataObj.append('imageUrl', imageUrl);
       formDataObj.append('type', type);    
       Object.keys(formData).forEach(key => {
         formDataObj.append(key, formData[key]);
@@ -99,7 +129,15 @@ const Create: React.FC = () => {
             />
             <label htmlFor="stationery">Stationery</label>
           </div>
-          <input type="file" accept="image/*" ref={fileInputRef} />
+          <div>
+            <h2>Upload Primary Image</h2>
+            <input type="file" accept="image/*" ref={primaryFileInputRef} required />
+          </div>
+
+          <div>
+            <h2>Upload Other Images</h2>
+            <input type="file" accept="image/*" ref={otherFilesInputRef} multiple />
+          </div>
           {type === 'book' && (
             <>
               <input name="title" placeholder="Title" onChange={handleInputChange} />

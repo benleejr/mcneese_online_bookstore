@@ -1,23 +1,11 @@
 // components/AboutPage.tsx
-
 import React from 'react';
 import Layout from '../components/Layout';
 
 const AboutPage: React.FC = () => {
   return (
     <Layout>
-      <div className="page">
-        {/* Header */}
-        <header>
-          <nav>
-            <ul>
-              <li><a href="/">Home</a></li>
-              <li><a href="#">About</a></li> {/* Add a link to the About page */}
-              {/* Add more navigation links as needed */}
-            </ul>
-          </nav>
-        </header>
-
+      <div className="page">        
         {/* Body */}
         <main>
           <section className="about-section">

@@ -23,7 +23,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { type } = req.body;
 
-    console.log('Form', type);
+    console.log('Form:', req.body);
+
+    const primaryImageURL = req.body.primaryImageURL;
+    const otherImageURLs = req.body.otherImageURLs ? JSON.parse(req.body.otherImageURLs) : [];
 
     try {
       if (type === 'book') {
@@ -39,7 +42,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             description: req.body.description,
             publisher: req.body.publisher,
             publishedYear: parseInt(req.body.publishedYear, 10),
-            imageURL: req.body.imageURL,
+            primaryImageURL,
+            otherImageURLs,
             stock: parseInt(req.body.stock, 10),
           },
         });
@@ -54,7 +58,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             description: req.body.description,
             category: req.body.category,
             stock: parseInt(req.body.stock, 10),
-            imageURL: req.body.imageURL,
+            primaryImageURL,
+            otherImageURLs,
           },
         });
         res.status(200).json(stationery);
@@ -65,5 +70,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });
     }
-  });  // This line was missing to close the handler function
+  });
 };

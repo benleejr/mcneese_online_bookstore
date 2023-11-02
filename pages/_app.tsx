@@ -1,5 +1,7 @@
 import { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 interface MyAppProps extends AppProps {
   pageProps: {

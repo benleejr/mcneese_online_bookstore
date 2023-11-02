@@ -5,17 +5,6 @@ const ContactPage: React.FC = () => {
   return (
     <Layout>
       <div className="page">
-        {/* Header */}
-        <header>
-          <nav>
-            <ul>
-              <li><a href="/">Home</a></li>
-              <li><a href="#">Contact</a></li> {/* Add a link to the Contact page */}
-              {/* Add more navigation links as needed */}
-            </ul>
-          </nav>
-        </header>
-
         {/* Main content */}
         <main>
           <section className="contact-info">

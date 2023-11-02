@@ -29,7 +29,7 @@ const Header: React.FC = () => {
       <div className="flex-container">
         <div className="left" onClick={() => Router.push('/')}>
           <Link href="/">
-            <img src="logo.svg" alt="McNeese Logo" className="logo" />
+            <img src="/logo.svg" alt="McNeese Logo" className="logo" />
           </Link>
         </div>
         <div className="center">
@@ -70,7 +70,7 @@ const Header: React.FC = () => {
       <nav className="nav-container">
         <ul className="nav-list">
           <li><a href="/">Home</a></li>
-          <li><a href="#">About Us</a></li>
+          <li><a href="pages/AboutPage.tsx">About Us</a></li>
           <li className="dropdown">
             Books
             <ul className="dropdown-content">
