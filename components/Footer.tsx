@@ -16,16 +16,10 @@ const footerSections = [
     content: 'Our Facebook',
     link: 'https://www.facebook.com/McNeese-Bookstore-161892853828362',
   },
-  {
-    className: 'careers',
-    content: 'Careers section',
-    link: '/careers',
-  },
 ];
 
 const Footer: React.FC = () => {
-  const footerStyle: CSSProperties = {
-    position: 'absolute',
+  const footerStyle: CSSProperties = {    
     bottom: '0',
     width: '100%',
     display: 'flex',

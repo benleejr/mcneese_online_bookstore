@@ -16,7 +16,7 @@ const ContactPage: React.FC = () => {
             <h2>Contact Information</h2>
             <address>
               <p>
-                Address: Mcneese street<br />
+                Address: McNeese Street<br />
                 City: Lake Charles<br />
                 Country: United States<br />
                 Postal Code: 70607

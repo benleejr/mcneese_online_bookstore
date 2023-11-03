@@ -1,12 +1,13 @@
 import React, { ReactNode } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+
 type Props = {
   children: ReactNode;
 };
 
 const Layout: React.FC<Props> = (props) => (
-  <div>
+  <div className="container">
     <Header />
     
     <div className="layout">{props.children}</div>

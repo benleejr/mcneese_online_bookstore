@@ -5,17 +5,7 @@ const ShoppingCartPage: React.FC = () => {
   return (
     <Layout>
       <div className="page">
-        
-        <header>
-          <nav>
-            <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Products</a></li>
-              
-            </ul>
-          </nav>
-        </header>
-
+      
         {/* Main content */}
         <main>
           <section className="shopping-cart">
