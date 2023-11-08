@@ -4,6 +4,7 @@ import Layout from 'components/Layout';
 import Slider from "react-slick";
 import { GetServerSideProps } from 'next';
 import prisma from 'lib/prisma.ts';
+import { useCart } from 'pages/context/CartContext';
 
 type ProductProps = {
   product: any;  // Adjust the type as needed
@@ -41,13 +42,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const Product: React.FC<ProductProps> = ({ product }) => {
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    
+  const { dispatch } = useCart();  // Move the hook call inside the component
+
+  const handleAddToCart = () => {
+    const itemToAdd = {
+      id: product.id,
+      name: product.hasOwnProperty('ISBN') ? product.title : product.name,
+      price: product.price,
+      primaryImageURL: product.primaryImageURL,
+      quantity: 1, 
+    };
+
+    // Dispatch the 'ADD_ITEM' action
+    dispatch({ type: 'ADD_ITEM', payload: itemToAdd });
+
+    // No need to use localStorage here; the cartReducer should handle it
   };
 
   const allImageURLs = [product.primaryImageURL, ...product.otherImageURLs];
@@ -67,6 +76,7 @@ const Product: React.FC<ProductProps> = ({ product }) => {
               ))}
             </Slider>
           </div>
+          <button onClick={handleAddToCart}>Add to Cart</button>
           <div className="product-info">
             <h1>{isBook ? product.title : product.name}</h1>
             {isBook ? (

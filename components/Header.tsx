@@ -9,6 +9,18 @@ const Header: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const { data: session } = useSession();
 
+  const handleSearch = () => {
+    if (search.trim()) {
+      Router.push(`/Results?search=${encodeURIComponent(search.trim())}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   useEffect(() => {
     console.log(session);
     if (session?.user?.email) {
@@ -33,16 +45,17 @@ const Header: React.FC = () => {
           </Link>
         </div>
         <div className="center">
-          <input
+        <input
             type="text"
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <button>🔍</button>
         </div>
         <div className="right">
-          <a href = "shopping-cart">
+          <a href = "ShoppingCartPage">
             <button className="cart-button">🛒</button>
           </a>
           {session ? (
