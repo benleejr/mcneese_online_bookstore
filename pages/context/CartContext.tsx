@@ -1,5 +1,6 @@
 // context/CartContext.tsx
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
+import { useEffect } from 'react';
 
 // Type definitions for cart items and cart actions
 type CartItem = {
@@ -18,8 +19,8 @@ type CartAction =
   | { type: 'ADD_ITEM'; payload: CartItem }
   | { type: 'REMOVE_ITEM'; payload: { id: string } }
   | { type: 'SET_CART_TOTAL'; payload: number }
-  // Add other action types here
   | { type: 'CLEAR_CART' }
+  | { type: 'LOAD_ITEMS', payload: CartItem[] }
   | { type: 'INCREMENT'; payload: { id: string } }
   | { type: 'DECREMENT'; payload: { id: string } };
   
@@ -82,6 +83,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       return state; // Placeholder, replace with actual logic
     case 'SET_CART_TOTAL':
       return { ...state, cartTotal: action.payload };
+    case 'LOAD_ITEMS': {
+      return { ...state, cartItems: action.payload };
+    }
     default:
       return state;
   }
@@ -95,18 +99,17 @@ type CartProviderProps = {
 // Create a provider for the cart
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [state, dispatch] = useReducer(cartReducer, {
-    cartItems: JSON.parse(localStorage.getItem('cart')) || [], // Initialize from local storage
+    cartItems: [], // Don't try to load from localStorage here
     cartTotal: 0,    
   });
   
   useEffect(() => {
-    // Load cart items from local storage on the client side
     const cartFromStorage = localStorage.getItem('cart');
     if (cartFromStorage) {
-      // Parse the cart items and dispatch an action to update the state
-      dispatch({ type: 'LOAD_ITEMS', payload: JSON.parse(cartFromStorage) });
+      const parsedCartItems: CartItem[] = JSON.parse(cartFromStorage);
+      dispatch({ type: 'LOAD_ITEMS', payload: parsedCartItems });
     }
-  }, []); // Empty array ensures this effect runs once on mount
+  }, []);
 
   useEffect(() => {
     // Calculate the new cart total whenever cartItems change

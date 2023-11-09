@@ -55,9 +55,9 @@ const Header: React.FC = () => {
           <button>🔍</button>
         </div>
         <div className="right">
-          <a href = "ShoppingCartPage">
-            <button className="cart-button">🛒</button>
-          </a>
+          <Link href="/ShoppingCart">            
+              <button className="cart-button">🛒</button>            
+          </Link>
           {session ? (
             <div className="dropdown">
               <button className="login-button">Profile</button>

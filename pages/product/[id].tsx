@@ -44,6 +44,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const Product: React.FC<ProductProps> = ({ product }) => {
   const { dispatch } = useCart();  // Move the hook call inside the component
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    // ... other settings you need
+  };
+
   const handleAddToCart = () => {
     const itemToAdd = {
       id: product.id,
@@ -67,16 +76,18 @@ const Product: React.FC<ProductProps> = ({ product }) => {
     <Layout>
       {product && (
         <div className="product-page">
-          <div className="image-slider">
-            <Slider {...settings}>
-              {allImageURLs.map((url, index) => (
-                <div key={index} className="slide">
-                  <img src={url} alt={`Image ${index + 1}`} />
-                </div>
-              ))}
-            </Slider>
+          <div className="image-container">
+            <div className="image-slider">
+              <Slider {...settings}>
+                {allImageURLs.map((url, index) => (
+                  <div key={index} className="slide">
+                    <img src={url} alt={`Image ${index + 1}`} />
+                  </div>
+                ))}
+              </Slider>
+            </div>
+            <button onClick={handleAddToCart} className="add-to-cart-button">Add to Cart</button>
           </div>
-          <button onClick={handleAddToCart}>Add to Cart</button>
           <div className="product-info">
             <h1>{isBook ? product.title : product.name}</h1>
             {isBook ? (
@@ -98,33 +109,43 @@ const Product: React.FC<ProductProps> = ({ product }) => {
           </div>
         </div>
       )}
-      <style jsx>{`
+       <style jsx>{`
         .product-page {
           display: flex;
           padding: 2rem;
-          flex-direction: row;  // Changed from 'column' to 'row'
-          align-items: flex-start;  // Align to the top
+          flex-direction: row;
+          align-items: flex-start;
           max-width: 1200px;
           margin: auto;
-          gap: 2rem;  
+          gap: 2rem;
+        }
+        .image-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
         .image-slider {
           width: 100%;
           max-width: 600px;
-          margin-bottom: 2rem;
         }
         .slide {
           position: relative;
           overflow: hidden;
-          display: flex;  
-          justify-content: center;  
-          align-items: center; 
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
         .slide img {
           width: 100%;
           display: block;
           max-height: 400px;
           object-fit: contain;
+        }
+        .add-to-cart-button {
+          margin-top: 2rem; 
+          padding: 0.5rem 1.5rem;
+          font-size: 1rem;
+          cursor: pointer;
         }
         .product-info {
           width: 100%;
@@ -133,6 +154,9 @@ const Product: React.FC<ProductProps> = ({ product }) => {
         @media (max-width: 768px) {
           .product-page {
             flex-direction: column;
+          }
+          .image-container {
+            width: 100%;
           }
         }
       `}</style>

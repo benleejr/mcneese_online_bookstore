@@ -5,3 +5,5 @@ npx prisma studio - run GUI for modifying database
 npx prisma db push - try out a prototype
 
 npm install react-slick slick-carousel
+
+npm install @stripe/stripe-js @stripe/react-stripe-js

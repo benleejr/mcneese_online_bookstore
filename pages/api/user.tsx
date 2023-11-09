@@ -13,8 +13,13 @@ export default async (req, res) => {
   try {
     const user = await prisma.user.findUnique({ 
         where: { email },
-        select: { isAdmin: true }
+        select: { id: true, isAdmin: true } 
     });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     console.log(user);
     res.status(200).json(user);
   } catch (error) {

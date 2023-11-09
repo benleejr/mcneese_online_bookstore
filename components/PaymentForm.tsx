@@ -1,0 +1,140 @@
+// components/PaymentForm.tsx
+import React from 'react';
+import { useRouter } from 'next/router'; // Import useRouter
+import {
+  CardElement,
+  useStripe,
+  useElements,
+} from '@stripe/react-stripe-js';
+import { useSession } from 'next-auth/react';
+
+const PaymentForm = ({ getOrderItems, calculateTotal, dispatch }) => {
+  const { data: session, status } = useSession();
+
+  console.log(session, status);
+
+  const stripe = useStripe();
+  const elements = useElements();
+  const router = useRouter();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  
+    if (!stripe || !elements) {
+      // Inform the user that Stripe has not loaded
+      console.log('Stripe has not loaded yet.');
+      return;
+    }
+  
+    const cardElement = elements.getElement(CardElement);
+  
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: cardElement,
+    });
+  
+    if (error) {
+      console.log('[error]', error);
+    } else {
+      console.log('[PaymentMethod]', paymentMethod);
+      if (paymentMethod) {
+        await handlePaymentSuccess(paymentMethod);
+      }
+    }
+  };
+  
+  const handlePaymentSuccess = async (paymentMethod) => {
+    const response = await fetch('/api/create-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        items: getOrderItems(),
+        total: calculateTotal(),
+        paymentMethodId: paymentMethod.id
+      }),
+      credentials: 'include'
+    });
+  
+    if (response.ok) {
+      const orderConfirmation = await response.json();
+      dispatch({ type: 'CLEAR_CART' }); // Clear the cart in context
+      router.push(`/CheckoutComplete?order=${orderConfirmation.orderId}`);
+    } else {
+      console.error('Payment failed:', await response.json());
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="payment-form">
+      <div className="input-wrapper">
+        <input type="text" placeholder="Cardholder Name" required />
+      </div>
+      <div className="card-element-wrapper">
+        <CardElement options={{
+          style: {
+            base: {
+              iconColor: '#666EE8',
+              color: '#31325F',
+              lineHeight: '40px',
+              fontWeight: 300,
+              fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+              fontSize: '18px',
+              '::placeholder': {
+                color: '#CFD7E0',
+              },
+            },
+            invalid: {
+              color: '#E25950',
+            },
+          },
+        }} />
+      </div>
+      <button type="submit" disabled={!stripe}>Pay</button>
+      <style jsx>{`
+        .payment-form {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch; /* This ensures that the children stretch to the parent's width */
+          gap: 20px;
+          max-width: 500px; /* Adjust or remove this as needed */
+          margin: auto;
+        }
+
+        .input-wrapper {
+          margin-bottom: 20px; /* Adjust space between inputs */
+        }
+
+        .card-element-wrapper {
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          background-color: #fafafa;
+        }
+
+        .payment-form button {
+          background-color: #22a6b3;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          padding: 10px 20px;
+          margin-top: 20px; /* Space between CardElement and the button */
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+
+        .payment-form button:disabled {
+          background-color: #cccccc;
+          cursor: not-allowed;
+        }
+
+        .payment-form button:not(:disabled):hover {
+          background-color: #1e9aa8;
+        }
+      `}</style>
+</form>
+  );
+};
+
+export default PaymentForm;

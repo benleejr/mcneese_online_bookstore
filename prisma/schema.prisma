@@ -23,7 +23,7 @@ model Book {
   createdAt      DateTime   @default(now()) @map(name: "created_at")
   updatedAt      DateTime   @updatedAt @map(name: "updated_at")
   reviews        Review[]
-  orders         Order[]
+  orderItems     OrderItem[]
   Cart           Cart[]
   Wishlist       Wishlist[]
   primaryImageURL String?   
@@ -48,6 +48,7 @@ model Stationery {
   description     String?
   category        String
   stock           Int        @default(0)
+  orderItems      OrderItem[]
 }
 
 
@@ -73,14 +74,28 @@ model User {
 
 // Orders Table
 model Order {
-  id        String   @id @default(cuid())
-  userId    String
-  bookId    String
-  status    String // Example statuses could be "Pending", "Shipped", "Delivered"
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @updatedAt @map(name: "updated_at")
-  user      User     @relation(fields: [userId], references: [id])
-  book      Book     @relation(fields: [bookId], references: [id])
+  id          String     @id @default(cuid())
+  userId      String
+  total       Float
+  status      String     @default("Pending")
+  createdAt   DateTime   @default(now()) @map(name: "created_at")
+  updatedAt   DateTime   @updatedAt @map(name: "updated_at")
+  user        User       @relation(fields: [userId], references: [id])
+  orderItems  OrderItem[]
+}
+
+model OrderItem {
+  id           String     @id @default(cuid())
+  orderId      String
+  bookId       String?
+  stationeryId String?
+  quantity     Int
+  order        Order      @relation(fields: [orderId], references: [id])
+  book         Book?      @relation(fields: [bookId], references: [id])
+  stationery   Stationery?@relation(fields: [stationeryId], references: [id])
+
+  @@unique([orderId, bookId])
+  @@unique([orderId, stationeryId])
 }
 
 // Reviews Table
