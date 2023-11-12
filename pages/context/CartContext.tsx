@@ -2,7 +2,6 @@
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 import { useEffect } from 'react';
 
-// Type definitions for cart items and cart actions
 type CartItem = {
   id: string;
   name: string;
@@ -24,8 +23,6 @@ type CartAction =
   | { type: 'INCREMENT'; payload: { id: string } }
   | { type: 'DECREMENT'; payload: { id: string } };
   
-
-// Create the cart context with a default value
 const CartContext = createContext<{
   state: CartState;
   dispatch: React.Dispatch<CartAction>;
@@ -34,7 +31,6 @@ const CartContext = createContext<{
   dispatch: () => null,
 });
 
-// Reducer function for managing cart state
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
@@ -69,18 +65,16 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       return { ...state, cartItems: updatedCartItems, cartTotal: newCartTotal };
     }
     case 'CLEAR_CART':
-      // Implement the logic for CLEAR_CART
       return {
         ...state,
         cartItems: [],
         cartTotal: 0
       };
     case 'INCREMENT':
-      // Implement the logic for INCREMENT
-      return state; // Placeholder, replace with actual logic
+      return state; 
     case 'DECREMENT':
-      // Implement the logic for DECREMENT
-      return state; // Placeholder, replace with actual logic
+      
+      return state; 
     case 'SET_CART_TOTAL':
       return { ...state, cartTotal: action.payload };
     case 'LOAD_ITEMS': {
@@ -91,15 +85,13 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   }
 };
 
-// Define the CartProvider props
 type CartProviderProps = {
   children: ReactNode;
 };
 
-// Create a provider for the cart
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [state, dispatch] = useReducer(cartReducer, {
-    cartItems: [], // Don't try to load from localStorage here
+    cartItems: [], 
     cartTotal: 0,    
   });
   
@@ -112,16 +104,11 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   }, []);
 
   useEffect(() => {
-    // Calculate the new cart total whenever cartItems change
     const newCartTotal = state.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
     dispatch({ type: 'SET_CART_TOTAL', payload: newCartTotal });
-
-    // Update local storage with the new state of cartItems
     localStorage.setItem('cart', JSON.stringify(state.cartItems));
   }, [state.cartItems]);
 
-
-  // The value prop expects an object with state and dispatch
   return (
     <CartContext.Provider value={{ state, dispatch }}>
       {children}
@@ -129,7 +116,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   );
 };
 
-// Custom hook to use the cart context
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {

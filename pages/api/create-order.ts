@@ -44,17 +44,18 @@ export default async function handle(req, res) {
         },
       });
         
-        const orderItemPromises = items.map(item => {
-          const isBook = item.type === 'book';
-          return prisma.orderItem.create({
-            data: {
-              orderId: newOrder.id,
-              bookId: item.type === 'book' ? item.id : null,
-              stationeryId: item.type === 'stationery' ? item.id : null,
-              quantity: item.quantity,
-            },
-          });
+      const orderItemPromises = items.map(item => {
+
+        console.log(item);
+        return prisma.orderItem.create({
+          data: {
+            orderId: newOrder.id,
+            bookId: item.bookId,
+            stationeryId: item.stationeryId,
+            quantity: item.quantity,
+          },
         });
+      });
 
         await Promise.all(orderItemPromises);
 

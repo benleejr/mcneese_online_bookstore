@@ -1,33 +1,29 @@
 // components/PaymentForm.tsx
 import React from 'react';
-import { useRouter } from 'next/router'; // Import useRouter
-import {
-  CardElement,
-  useStripe,
-  useElements,
-} from '@stripe/react-stripe-js';
-import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useCart } from '../pages/context/CartContext';
 
-const PaymentForm = ({ getOrderItems, calculateTotal, dispatch }) => {
-  const { data: session, status } = useSession();
-
-  console.log(session, status);
-
+const PaymentForm = () => {
+  const { state, dispatch } = useCart(); // Directly access cartItems from CartContext
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
+
+  const calculateTotal = () => {
+    return state.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
   
     if (!stripe || !elements) {
-      // Inform the user that Stripe has not loaded
       console.log('Stripe has not loaded yet.');
       return;
     }
   
     const cardElement = elements.getElement(CardElement);
-  
+
     const { error, paymentMethod } = await stripe.createPaymentMethod({
       type: 'card',
       card: cardElement,
@@ -35,11 +31,15 @@ const PaymentForm = ({ getOrderItems, calculateTotal, dispatch }) => {
   
     if (error) {
       console.log('[error]', error);
+      return;
+    }
+  
+    const paymentSuccess = await handlePaymentSuccess(paymentMethod);
+    if (paymentSuccess) {
+      dispatch({ type: 'CLEAR_CART' }); // Clear the cart if payment succeeds
+      router.push(`/CheckoutComplete?order=${paymentSuccess.orderId}`);
     } else {
-      console.log('[PaymentMethod]', paymentMethod);
-      if (paymentMethod) {
-        await handlePaymentSuccess(paymentMethod);
-      }
+      console.error('Payment failed');
     }
   };
   
@@ -50,20 +50,21 @@ const PaymentForm = ({ getOrderItems, calculateTotal, dispatch }) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        items: getOrderItems(),
+        items: state.cartItems.map(item => ({ // Map cart items to the expected format
+          bookId: item.type === 'book' ? item.id : null,
+          stationeryId: item.type === 'stationery' ? item.id : null,
+          quantity: item.quantity,
+        })),
         total: calculateTotal(),
-        paymentMethodId: paymentMethod.id
+        paymentMethodId: paymentMethod.id,
       }),
       credentials: 'include'
     });
   
     if (response.ok) {
-      const orderConfirmation = await response.json();
-      dispatch({ type: 'CLEAR_CART' }); // Clear the cart in context
-      router.push(`/CheckoutComplete?order=${orderConfirmation.orderId}`);
-    } else {
-      console.error('Payment failed:', await response.json());
+      return response.json();
     }
+    return null; 
   };
 
   return (
