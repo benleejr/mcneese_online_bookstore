@@ -18,7 +18,6 @@ const CheckoutComplete = () => {
       try {
         const session = await getSession();
   
-        // Fetch the most recent order
         const orderResponse = await fetch(`/api/order/latest`, {
           method: 'GET',
           headers: {
@@ -50,17 +49,24 @@ const CheckoutComplete = () => {
         const updatedOrderDetails = {
           ...orderData,
           items: itemsData.map(item => {
-            const price = item.type === 'Book' ? (item.book?.price || 0) * item.quantity : (item.stationery?.price || 0) * item.quantity;
-            const primaryImageURL = item.type === 'Book' ? item.book?.primaryImageURL || 'defaultBookImageUrl' : item.stationery?.primaryImageURL || 'defaultStationeryImageUrl';
+            console.log('Book price:', item.book?.price);
+            console.log('Stationery price:', item.stationery?.price);
 
-            // Log the primaryImageURL to check if it's correct
+            const price = item.book?.price !== undefined 
+              ? parseFloat(item.book.price) 
+              : item.stationery?.price !== undefined 
+                ? parseFloat(item.stationery.price) 
+                : 0;
+
+            console.log('Parsed price:', price);
+            const primaryImageURL = item.book ? (item.book.primaryImageURL || 'defaultBookImageUrl') : (item.stationery ? (item.stationery.primaryImageURL || 'defaultStationeryImageUrl') : 'defaultImageUrl');
+
             console.log('primaryImageURL:', primaryImageURL);
-
             return {
-              ...item,
               itemId: item.type === 'Book' ? item.bookId : item.stationeryId,
-              price,
+              price: price,
               primaryImageURL,
+              ...item,
             };
           }),
           total: itemsData.reduce((total, item) => total + parseFloat((((item.type === 'Book' ? item.book?.price : item.stationery?.price) || 0) * item.quantity).toFixed(2)), 0),
@@ -88,14 +94,20 @@ const CheckoutComplete = () => {
           <>
             <h2>Order ID: {orderDetails.id}</h2>
             <ul>
-              {orderDetails.items.map((item) => (
-                <li key={item.id}>
-                  {item.book?.title || item.stationery?.name} - Quantity: {item.quantity} - Price: ${(item.book?.price * item.quantity)?.toFixed(2) || (item.stationery?.price * item.quantity)?.toFixed(2)}
-                  <img src={item.primaryImageURL} alt={item.book?.title || item.stationery?.name} />
-                </li>
-              ))}
+            {orderDetails.items.map((item) => (
+              <li key={item.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '1em' }}>
+                <img src={item.primaryImageURL} alt={item.book?.title || item.stationery?.name} style={{ width: '100px', marginRight: '1em' }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div>Title: {item.book?.title || item.stationery?.name}</div>
+                    <div>Quantity: {item.quantity}</div>
+                    <div>Price: ${(item.price * item.quantity).toFixed(2)}</div>
+                  </div>
+                </div>
+              </li>
+            ))}
             </ul>
-            <p>Total Price: ${orderDetails.total.toFixed(2)}</p>
+            <p style={{ marginTop: '2em', fontSize: '1.2em', fontWeight: 'bold' }}>Total Price: ${orderDetails.items.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}</p>
           </>
         )}
       </div>

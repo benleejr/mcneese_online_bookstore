@@ -17,8 +17,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         orderId: orderId as string,
       },
       include: {
-        book: true,
-        stationery: true,
+        book: {
+          select: {
+            title: true,
+            price: true,
+            primaryImageURL: true,
+          },
+        },
+        stationery: {
+          select: {
+            name: true,
+            price: true,
+            primaryImageURL: true,
+          },
+        },
       },
     });
 
@@ -26,6 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ message: 'No items found for this order' });
     }
 
+    console.log(orderItems);
     res.status(200).json(orderItems);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
