@@ -32,7 +32,7 @@ export default async function handle(req, res) {
   }
 
   const { items, total } = req.body;
-
+  console.log('Received total:', total);
 
   try {
     const order = await prisma.$transaction(async (prisma) => {
@@ -45,8 +45,6 @@ export default async function handle(req, res) {
       });
         
       const orderItemPromises = items.map(item => {
-
-        console.log(item);
         return prisma.orderItem.create({
           data: {
             orderId: newOrder.id,

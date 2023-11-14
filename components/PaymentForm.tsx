@@ -5,13 +5,19 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useCart } from '../pages/context/CartContext';
 
 const PaymentForm = () => {
-  const { state, dispatch } = useCart(); // Directly access cartItems from CartContext
+  const { state, dispatch } = useCart();
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
 
   const calculateTotal = () => {
-    return state.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return parseFloat(
+      state.cartItems.reduce((total, item) => {
+        console.log('Price:', item.price); 
+        console.log('Quantity:', item.quantity); 
+        return total + item.price * item.quantity;
+      }, 0).toFixed(2)
+    );
   };
 
   const handleSubmit = async (event) => {
@@ -35,6 +41,8 @@ const PaymentForm = () => {
     }
   
     const paymentSuccess = await handlePaymentSuccess(paymentMethod);
+    const total = calculateTotal();
+    console.log('Total before sending:', total);
     if (paymentSuccess) {
       dispatch({ type: 'CLEAR_CART' }); // Clear the cart if payment succeeds
       router.push(`/CheckoutComplete?order=${paymentSuccess.orderId}`);
@@ -44,17 +52,24 @@ const PaymentForm = () => {
   };
   
   const handlePaymentSuccess = async (paymentMethod) => {
+    console.log(state.cartItems);
+    const total = calculateTotal();
+    console.log('Total:', total);
+    const items = state.cartItems.map(item => ({
+      bookId: item.type === 'Book' ? item.bookId : null,
+      stationeryId: item.type === 'Stationery' ? item.stationeryId : null,
+      quantity: item.quantity,
+    }));
+    
+    console.log(items);
+  
     const response = await fetch('/api/create-order', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        items: state.cartItems.map(item => ({ // Map cart items to the expected format
-          bookId: item.type === 'book' ? item.id : null,
-          stationeryId: item.type === 'stationery' ? item.id : null,
-          quantity: item.quantity,
-        })),
+        items: items,
         total: calculateTotal(),
         paymentMethodId: paymentMethod.id,
       }),

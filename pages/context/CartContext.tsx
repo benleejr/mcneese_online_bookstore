@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 
 type CartItem = {
   id: string;
+  bookId?: string;
+  stationeryId?: string;
   name: string;
   price: number;
   quantity: number;
@@ -21,7 +23,8 @@ type CartAction =
   | { type: 'CLEAR_CART' }
   | { type: 'LOAD_ITEMS', payload: CartItem[] }
   | { type: 'INCREMENT'; payload: { id: string } }
-  | { type: 'DECREMENT'; payload: { id: string } };
+  | { type: 'DECREMENT'; payload: { id: string } }
+  | { type: 'SET_QUANTITY'; payload: {id: number} };
   
 const CartContext = createContext<{
   state: CartState;
@@ -46,12 +49,20 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         };
         updatedCartItems[existingCartItemIndex] = updatedItem;
       } else {
-        updatedCartItems.push({ ...action.payload, quantity: 1 });
+        const newItem = {
+          ...action.payload,
+          quantity: 1,
+          type: action.payload.bookId ? 'Book' : 'Stationery',
+          bookId: action.payload.bookId ? action.payload.bookId : null,
+          stationeryId: action.payload.stationeryId ? action.payload.stationeryId : null
+        };
+        console.log(newItem);
+        updatedCartItems.push(newItem);
       }
       const newCartTotal = updatedCartItems.reduce(
         (sum, item) => sum + item.price * item.quantity, 0
       );
-      localStorage.setItem('cart', JSON.stringify(state.cartItems));
+      localStorage.setItem('cart', JSON.stringify(updatedCartItems));
       return { ...state, cartItems: updatedCartItems, cartTotal: newCartTotal };
     }
     case 'REMOVE_ITEM': {
@@ -70,11 +81,57 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         cartItems: [],
         cartTotal: 0
       };
-    case 'INCREMENT':
-      return state; 
-    case 'DECREMENT':
-      
-      return state; 
+      case 'INCREMENT': {
+        const updatedCartItems = state.cartItems.map((item) => {
+          if (item.id === action.payload.id) {
+            return {
+              ...item,
+              quantity: item.quantity + 1,
+            };
+          }
+          return item;
+        });
+        const newCartTotal = updatedCartItems.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
+        return { ...state, cartItems: updatedCartItems, cartTotal: newCartTotal };
+      }
+      case 'DECREMENT': {
+        const updatedCartItems = state.cartItems.map((item) => {
+          if (item.id === action.payload.id) {
+            return {
+              ...item,
+              quantity: item.quantity - 1,
+            };
+          }
+          return item;
+        });
+        const newCartTotal = updatedCartItems.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
+        return { ...state, cartItems: updatedCartItems, cartTotal: newCartTotal };
+      }
+      case 'SET_QUANTITY': {
+        const updatedCartItems = state.cartItems.map((item) => {
+          if (item.id === action.payload.id) {
+            return {
+              ...item,
+              quantity: action.payload.quantity,
+            };
+          }
+          return item;
+        });
+        const newCartTotal = updatedCartItems.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
+        return { ...state, cartItems: updatedCartItems, cartTotal: newCartTotal };
+      }
     case 'SET_CART_TOTAL':
       return { ...state, cartTotal: action.payload };
     case 'LOAD_ITEMS': {

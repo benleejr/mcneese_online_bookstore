@@ -19,7 +19,13 @@ const ShoppingCart = () => {
   };
 
   const calculateTotal = () => {
-    return state.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return parseFloat(
+      state.cartItems.reduce((total, item) => {
+        console.log('Price:', item.price); // Debugging line
+        console.log('Quantity:', item.quantity); // Debugging line
+        return total + item.price * item.quantity;
+      }, 0).toFixed(2)
+    );
   };
 
   return (

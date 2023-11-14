@@ -6,19 +6,29 @@ import Layout from '../components/Layout';
 import { useCart } from './context/CartContext';
 
 const CheckoutPage = () => {
-  const { state, dispatch } = useCart(); // Using useCart to get the cart items
+  const { state, dispatch } = useCart(); 
 
   const calculateTotal = () => {
-    return state.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return parseFloat(
+      state.cartItems.reduce((total, item) => {
+        console.log('Price:', item.price); 
+        console.log('Quantity:', item.quantity); 
+        return total + item.price * item.quantity;
+      }, 0).toFixed(2)
+    );
   };
 
   const getOrderItems = () => {
-    return state.cartItems.map(item => ({
-      id: item.id,
-      quantity: item.quantity,
-      price: item.price,
-      type: item.type
-    }));
+    return state.cartItems.map(item => {
+      const itemId = item.type === 'book' ? item.bookId : item.stationeryId;
+      return {
+        id: item.id,
+        quantity: item.quantity,
+        price: item.price,
+        type: item.type,
+        itemId: itemId
+      };
+    });
   };
 
   return (

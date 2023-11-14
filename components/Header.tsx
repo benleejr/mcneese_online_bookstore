@@ -87,18 +87,18 @@ const Header: React.FC = () => {
           <li><a href="/">Home</a></li>
           <li><a href="/about">About Us</a></li>
           <li className="dropdown">
-            Books
+          Books
             <ul className="dropdown-content">
-              <li><a href="science">Science</a></li>
-              <li><a href="art">Arts</a></li>
-              <li><a href="history">History</a></li>
+              <li><Link href="/Results?search=Science">Science</Link></li>
+              <li><Link href="/Results?search=Art">Arts</Link></li>
+              <li><Link href="/Results?search=History">History</Link></li>
             </ul>
           </li>
           <li className="dropdown">
             Stationery
             <ul className="dropdown-content">
-              <li><a href="pen">Pens</a></li>
-              <li><a href="notebooks">Notebooks</a></li>
+              <li><Link href="/Results?search=Pen">Pens</Link></li>
+              <li><Link href="/Results?search=Notebooks">Notebooks</Link></li>
             </ul>
           </li>
         </ul>

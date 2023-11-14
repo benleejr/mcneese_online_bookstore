@@ -4,10 +4,11 @@ import React from 'react';
 import { CartProvider, useCart } from '../pages/context/CartContext';
 import Layout from "../components/Layout";
 import Link from 'next/link';
-
+import { useSession } from 'next-auth/react';
 
 const ShoppingCartPage = () => {
   const { state, dispatch } = useCart();
+  const { data: session } = useSession();
 
   const handleIncrement = (id: string) => {
     dispatch({ type: 'INCREMENT', payload: { id } });
@@ -18,12 +19,15 @@ const ShoppingCartPage = () => {
   };
 
   const handleQuantityChange = (id: string, quantity: number) => {
+    console.log('handleQuantityChange called:', id, quantity);
     dispatch({ type: 'SET_QUANTITY', payload: { id, quantity } });
   };
 
   const calculateTotal = () => {
-    return state.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return state.cartItems.reduce((total, item) => total + item.price * item.quantity, 0); 
   };
+
+
 
   return (
     <CartProvider>
@@ -37,7 +41,7 @@ const ShoppingCartPage = () => {
                 <button onClick={() => handleDecrement(item.id)}>-</button>
                 <input
                   type="number"
-                  value={item.quantity}
+                  value={state.cartItems.find(cartItem => cartItem.id === item.id)?.quantity || ''}
                   onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
                   className="quantity-input"
                 />
@@ -49,9 +53,16 @@ const ShoppingCartPage = () => {
           <div className="total-price">
             Total: ${calculateTotal().toFixed(2)}
           </div>
-          <Link href="/Checkout" passHref>
+          {!session && (
+          <div className="checkout-message">
+            You are not logged in. Please log in to proceed to checkout.
+          </div>
+        )}
+        {session && (
+          <Link href="/Checkout">
             <button className="checkout-button">Checkout</button>
           </Link>
+        )}
         </div>
       <style jsx>{`
         .cart-container {
@@ -74,17 +85,26 @@ const ShoppingCartPage = () => {
           margin-right: 10px;
           object-fit: contain; 
         }
-        .cart-item-name {
-          flex-grow: 1;
+        .cart-item-name {flex-grow: 1;
           margin-right: auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
         .quantity-controls {
           display: flex;
           align-items: center;
         }
         .quantity-input {
-          width: 3em; 
+          width: 3em;
           text-align: center;
+          appearance: none;
+          -moz-appearance: textfield;
+        }        
+        .quantity-input::-webkit-inner-spin-button,
+        .quantity-input::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
         }
       `}</style>
       

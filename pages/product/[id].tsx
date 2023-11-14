@@ -7,18 +7,17 @@ import prisma from 'lib/prisma.ts';
 import { useCart } from 'pages/context/CartContext';
 
 type ProductProps = {
-  product: any;  // Adjust the type as needed
+  product: any;  
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.params;
 
-  // Try fetching as a Book
   let product = await prisma.book.findUnique({
     where: { id: String(id) },
   });
 
-  // If not found, try fetching as Stationery
+  
   if (!product) {
     console.log(product);
     product = await prisma.stationery.findUnique({
@@ -26,7 +25,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     });
   }
 
-  // If still not found, return a 404 error
   if (!product) {
     return {
       notFound: true,
@@ -37,12 +35,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   product.updatedAt = product.updatedAt.toISOString();
 
   return {
-    props: { product },  // will be passed to the page component as props
+    props: { product },  
   };
 };
 
 const Product: React.FC<ProductProps> = ({ product }) => {
-  const { dispatch } = useCart();  // Move the hook call inside the component
+  const { dispatch } = useCart();  
 
   const settings = {
     dots: true,
@@ -50,23 +48,21 @@ const Product: React.FC<ProductProps> = ({ product }) => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    // ... other settings you need
+    
   };
 
   const handleAddToCart = () => {
-    const itemToAdd = {
-      id: product.id,
-      name: product.hasOwnProperty('ISBN') ? product.title : product.name,
-      price: product.price,
-      primaryImageURL: product.primaryImageURL,
-      quantity: 1, 
-    };
-
-    // Dispatch the 'ADD_ITEM' action
-    dispatch({ type: 'ADD_ITEM', payload: itemToAdd });
-
-    // No need to use localStorage here; the cartReducer should handle it
+  const itemToAdd = {
+    id: product.id,
+    name: isBook ? product.title : product.name,
+    price: product.price,
+    quantity: 1,
+    primaryImageURL: product.primaryImageURL,
+    ...(product.hasOwnProperty('ISBN') ? { bookId: product.id } : { stationeryId: product.id }),
   };
+  console.log('New Item:', itemToAdd);
+  dispatch({ type: 'ADD_ITEM', payload: itemToAdd });
+};
 
   const allImageURLs = [product.primaryImageURL, ...product.otherImageURLs];
 

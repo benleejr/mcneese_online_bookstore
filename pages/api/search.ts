@@ -14,10 +14,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const [stationeryResults, bookResults] = await Promise.all([
       prisma.stationery.findMany({
         where: {
-          name: {
-            contains: search as string,
-            mode: 'insensitive',  // Case-insensitive search
-          },
+          OR: [
+            { name: { contains: search as string, mode: 'insensitive' } },
+            { brand: { contains: search as string, mode: 'insensitive' } },
+            { category: { contains: search as string, mode: 'insensitive' } },
+            { description: { contains: search as string, mode: 'insensitive' } },
+          ],
         },
         select: {
           id: true,
@@ -29,11 +31,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }),
       prisma.book.findMany({
         where: {
-          // Assuming you have a 'title' field to search in the Book table. Adjust the field name and logic as needed.
-          title: {
-            contains: search as string,
-            mode: 'insensitive',  // Case-insensitive search
-          },
+          OR: [
+            { title: { contains: search as string, mode: 'insensitive' } },
+            { author: { contains: search as string, mode: 'insensitive' } },
+            { ISBN: { contains: search as string, mode: 'insensitive' } },
+            { category: { contains: search as string, mode: 'insensitive' } },
+            { description: { contains: search as string, mode: 'insensitive' } },
+            { publisher: { contains: search as string, mode: 'insensitive' } },
+          ],
         },
         select: {
           id: true,
@@ -45,7 +50,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }),
     ]);
 
-    // Merge and sort the results if necessary. This is a simplistic merge and does not handle pagination across two tables.
     const mergedResults = [...stationeryResults, ...bookResults];
 
     res.status(200).json(mergedResults);
