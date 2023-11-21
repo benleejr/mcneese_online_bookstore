@@ -87,8 +87,7 @@ const Header: React.FC = () => {
       </div>
       <nav className="nav-container">
         <ul className="nav-list">
-          <li><a href="/">Home</a></li>
-          <li><a href="/about">About Us</a></li>
+          <li><a href="/">Home</a></li>          
           <li className="dropdown">
             <Link href={{ pathname: "/EntireTableResult", query: { table: "Book" } }} style={{ textDecoration: 'none', color: 'white' }}>
               <span>Books</span>

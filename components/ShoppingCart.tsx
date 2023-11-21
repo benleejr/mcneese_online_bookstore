@@ -15,7 +15,11 @@ const ShoppingCart = () => {
   };
 
   const handleQuantityChange = (id: string, quantity: string) => {
-    const parsedQuantity = parseInt(quantity, 10);
+    const parsedQuantity = Number(quantity);
+    if (isNaN(parsedQuantity)) {
+      console.error(`Invalid quantity: ${quantity}`);
+      return;
+    }
     dispatch({ type: 'SET_QUANTITY', payload: { id, quantity: parsedQuantity } });
   };
 
