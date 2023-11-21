@@ -22,11 +22,9 @@ const Header: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log(session);
     if (session?.user?.email) {
       axios.get('/api/user', { params: { email: session.user.email } })
         .then(response => {
-          console.log(response.data);
           const user = response.data;
           setIsAdmin(user?.isAdmin ?? false);
         })

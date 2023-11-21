@@ -5,7 +5,6 @@ export default async function handle(req, res) {
   const { title, content } = req.body;
   
   const session = await getSession({ req: { headers: { cookie: req.headers.cookie || '' } } });
-  console.log("Session: ", session);
 
   if (session?.user?.email) {
     // Debug: Find user by email
@@ -26,5 +25,4 @@ export default async function handle(req, res) {
   } else {
     res.status(400).send("Session or email information is missing");
   }
-  console.log("Request Body: ", req.body);
 }

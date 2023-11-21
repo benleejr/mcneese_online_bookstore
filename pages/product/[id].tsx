@@ -19,7 +19,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   
   if (!product) {
-    console.log(product);
     // @ts-ignore
     product = await prisma.stationery.findUnique({
       where: { id: String(id) },
