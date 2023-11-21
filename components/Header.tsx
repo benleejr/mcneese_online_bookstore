@@ -90,18 +90,22 @@ const Header: React.FC = () => {
           <li><a href="/">Home</a></li>
           <li><a href="/about">About Us</a></li>
           <li className="dropdown">
-          Books
+            <Link href={{ pathname: "/EntireTableResult", query: { table: "Book" } }} style={{ textDecoration: 'none', color: 'white' }}>
+              <span>Books</span>
+            </Link>
             <ul className="dropdown-content">
-              <li><Link href="/Results?search=Science">Science</Link></li>
-              <li><Link href="/Results?search=Art">Arts</Link></li>
-              <li><Link href="/Results?search=History">History</Link></li>
+              <li><Link href="/ResultsByCategory?category=Science">Science</Link></li>
+              <li><Link href="/ResultsByCategory?category=Art">Arts</Link></li>
+              <li><Link href="/ResultsByCategory?category=History">History</Link></li>
             </ul>
           </li>
           <li className="dropdown">
-            Stationery
+            <Link href={{ pathname: "/EntireTableResult", query: { table: "Stationery" } }} style={{ textDecoration: 'none', color: 'white' }}>
+              <span>Stationery</span>
+            </Link>
             <ul className="dropdown-content">
-              <li><Link href="/Results?search=Pen">Pens</Link></li>
-              <li><Link href="/Results?search=Notebooks">Notebooks</Link></li>
+              <li><Link href="/ResultsByCategory?category=Pen">Pens</Link></li>
+              <li><Link href="/ResultsByCategory?category=Notebooks">Notebooks</Link></li>
             </ul>
           </li>
         </ul>
@@ -156,8 +160,9 @@ const Header: React.FC = () => {
           text-decoration: none;
         }
         
-        .nav-list a {
-          text-decoration: none;  // This line removes the underline
+        .nav-list a, .nav-link {
+          text-decoration: none;  
+          color: white;
         }
 
         .nav-list li {
