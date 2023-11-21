@@ -4,11 +4,12 @@ import { useRouter } from 'next/router';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useCart } from '../pages/context/CartContext';
 
-type CartItem = {
+type PaymentCartItem = {
   bookId?: string;
   stationeryId?: string;
   quantity: number;
   type: 'Book' | 'Stationery';
+  price: number;
 };
 
 const PaymentForm = () => {
@@ -19,7 +20,7 @@ const PaymentForm = () => {
 
   const calculateTotal = () => {
     return parseFloat(
-      (state.cartItems as CartItem[]).reduce((total, item) => {
+      (state.cartItems as PaymentCartItem[]).reduce((total, item) => {
         console.log('Price:', item.price); 
         console.log('Quantity:', item.quantity); 
         return total + item.price * item.quantity;
@@ -62,7 +63,7 @@ const PaymentForm = () => {
     console.log(state.cartItems);
     const total = calculateTotal();
     console.log('Total:', total);
-    const items = (state.cartItems as CartItem[]).map(item => ({
+    const items = (state.cartItems as PaymentCartItem[]).map(item => ({
       bookId: item.type === 'Book' ? item.bookId : null,
       stationeryId: item.type === 'Stationery' ? item.stationeryId : null,
       quantity: item.quantity,

@@ -20,7 +20,15 @@ const Results: React.FC = () => {
 
   const fetchResults = async (term: string, page: number) => {
     try {
-      const response = await axios.get('/api/search', { params: { search: term, page } });
+      // Determine the API endpoint based on the current route
+      let apiEndpoint = 'search'; // default to 'search'
+      if (router.pathname.includes('stationerySearch')) {
+        apiEndpoint = 'stationerySearch';
+      } else if (router.pathname.includes('bookSearch')) {
+        apiEndpoint = 'bookSearch';
+      }
+  
+      const response = await axios.get(`/api/${apiEndpoint}`, { params: { search: term, page } });
       setResults(response.data);
     } catch (error) {
       console.error('Error fetching search results:', error);

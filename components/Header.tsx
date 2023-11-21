@@ -66,8 +66,8 @@ const Header: React.FC = () => {
                   <Link href="/profile">Profile</Link>
                 </li>
                 <li>
-                  <Link href="/ViewOrders">View Orders</Link>
-                </li>
+                <Link href="/ViewOrders">View Orders</Link>
+              </li>
                 {isAdmin && (
                   <li>
                     <Link href="/Add">Add New Store Items</Link>
