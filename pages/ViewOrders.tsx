@@ -10,8 +10,10 @@ const ViewOrders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
+    // @ts-ignore
     if (session?.user?.id) {
-      axios.get(`/api/userOrders?userId=${session.user.id}`) // Use userId instead of email
+      // @ts-ignore
+      axios.get(`/api/userOrders?userId=${session.user.id}`) 
         .then(response => {
           const fetchedOrders = response.data;
           Promise.all(fetchedOrders.map(order => 

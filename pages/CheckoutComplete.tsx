@@ -3,7 +3,12 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 import { PrismaClient } from '@prisma/client';
+
+interface ExtendedSession extends Session {
+  accessToken?: string;
+}
 
 const prisma = new PrismaClient();
 
@@ -16,7 +21,7 @@ const CheckoutComplete = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const session = await getSession();
+        const session = await getSession() as ExtendedSession;
   
         const orderResponse = await fetch(`/api/order/latest`, {
           method: 'GET',

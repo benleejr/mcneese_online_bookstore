@@ -6,7 +6,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 const prisma = new PrismaClient();
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { page = 1, table } = req.query;
+  const { page = 1 } = req.query;
+  const table = Array.isArray(req.query.table) ? req.query.table[0] : req.query.table;
   const itemsPerPage = 25;
   const skip = (Number(page) - 1) * itemsPerPage;
 

@@ -2,7 +2,7 @@
 import React from 'react';
 import { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
-import { CartProvider } from 'pages/context/CartContext'; 
+import { CartProvider } from '../context/CartContext'; 
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import "slick-carousel/slick/slick.css"; 
@@ -26,7 +26,7 @@ const App = ({ Component, pageProps }: MyAppProps) => {
       
       <Elements stripe={stripePromise}>
         <SessionProvider session={pageProps.session}>
-          <CartProvider> {/* Wrap with CartProvider */}
+          <CartProvider>
             <Component {...pageProps} />
           </CartProvider>
         </SessionProvider>

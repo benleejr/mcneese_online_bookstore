@@ -3,7 +3,7 @@ import React from 'react';
 import ShoppingCart from '../components/ShoppingCart';
 import PaymentForm from '../components/PaymentForm'; 
 import Layout from '../components/Layout';
-import { useCart } from './context/CartContext';
+import { useCart } from '../context/CartContext';
 
 const CheckoutPage = () => {
   const { state, dispatch } = useCart(); 
@@ -20,7 +20,7 @@ const CheckoutPage = () => {
 
   const getOrderItems = () => {
     return state.cartItems.map(item => {
-      const itemId = item.type === 'book' ? item.bookId : item.stationeryId;
+      const itemId = item.type === 'Book' ? item.bookId : item.stationeryId;
       return {
         id: item.id,
         quantity: item.quantity,

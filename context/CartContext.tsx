@@ -10,6 +10,7 @@ type CartItem = {
   price: number;
   quantity: number;
   type: 'Book' | 'Stationery';
+  primaryImageURL: string;
 };
 
 type CartState = {
@@ -25,7 +26,7 @@ type CartAction =
   | { type: 'LOAD_ITEMS', payload: CartItem[] }
   | { type: 'INCREMENT'; payload: { id: string } }
   | { type: 'DECREMENT'; payload: { id: string } }
-  | { type: 'SET_QUANTITY'; payload: {id: number} };
+  | { type: 'SET_QUANTITY'; payload: {id: string, quantity: number} };
   
 const CartContext = createContext<{
   state: CartState;
@@ -53,7 +54,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         const newItem = {
           ...action.payload,
           quantity: 1,
-          type: action.payload.bookId ? 'Book' : 'Stationery',
+          type: (action.payload.bookId ? 'Book' : 'Stationery') as 'Book' | 'Stationery',
           bookId: action.payload.bookId ? action.payload.bookId : null,
           stationeryId: action.payload.stationeryId ? action.payload.stationeryId : null
         };

@@ -1,7 +1,12 @@
 // components/ShoppingCart.tsx
 
 import React from 'react';
-import { useCart } from '../pages/context/CartContext';
+import { useCart } from '../context/CartContext';
+
+type Action = 
+  | { type: 'INCREMENT'; payload: { id: string; } }
+  | { type: 'DECREMENT'; payload: { id: string; } }
+  | { type: 'SET_QUANTITY'; payload: { id: string; quantity: number; } };
 
 const ShoppingCart = () => {
   const { state, dispatch } = useCart();
@@ -15,12 +20,11 @@ const ShoppingCart = () => {
   };
 
   const handleQuantityChange = (id: string, quantity: string) => {
-    const parsedQuantity = Number(quantity);
-    if (isNaN(parsedQuantity)) {
-      console.error(`Invalid quantity: ${quantity}`);
+    let parsedQuantityNumber = parseInt(quantity);
+    if (isNaN(parsedQuantityNumber)) {
       return;
     }
-    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity: parsedQuantity } });
+    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity: parsedQuantityNumber } } as Action);
   };
 
   const calculateTotal = () => {

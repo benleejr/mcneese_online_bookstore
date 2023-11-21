@@ -2,7 +2,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { useCart } from '../pages/context/CartContext';
+import { useCart } from '../context/CartContext';
 
 type CartItem = {
   bookId?: string;
@@ -12,8 +12,14 @@ type CartItem = {
   type: 'Book' | 'Stationery';
 };
 
-const PaymentForm = () => {
-  const { state, dispatch } = useCart();
+interface PaymentFormProps {
+  getOrderItems: () => any; 
+  calculateTotal: () => number;
+  dispatch: any; 
+}
+
+const PaymentForm: React.FC<PaymentFormProps> = ({ dispatch }) => {
+  const { state } = useCart();
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();

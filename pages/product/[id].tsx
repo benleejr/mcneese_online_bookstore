@@ -1,10 +1,10 @@
 // pages/product/[id].tsx
 import React from 'react';
-import Layout from 'components/Layout';
+import Layout from '../../components/Layout';
 import Slider from "react-slick";
 import { GetServerSideProps } from 'next';
-import prisma from 'lib/prisma.ts';
-import { useCart } from 'pages/context/CartContext';
+import prisma from '../../lib/prisma';
+import { useCart } from '../../context/CartContext';
 
 type ProductProps = {
   product: any;  
@@ -20,6 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   
   if (!product) {
     console.log(product);
+    // @ts-ignore
     product = await prisma.stationery.findUnique({
       where: { id: String(id) },
     });
@@ -31,7 +32,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  // @ts-ignore
   product.createdAt = product.createdAt.toISOString();
+  // @ts-ignore
   product.updatedAt = product.updatedAt.toISOString();
 
   return {
@@ -61,6 +64,7 @@ const Product: React.FC<ProductProps> = ({ product }) => {
     ...(product.hasOwnProperty('ISBN') ? { bookId: product.id } : { stationeryId: product.id }),
   };
   console.log('New Item:', itemToAdd);
+  // @ts-ignore
   dispatch({ type: 'ADD_ITEM', payload: itemToAdd });
 };
 

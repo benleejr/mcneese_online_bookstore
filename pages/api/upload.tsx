@@ -1,8 +1,13 @@
 // pages/api/upload.tsx
 import { NextApiRequest, NextApiResponse } from 'next';
-import multer from 'multer';
+import multer, { Multer } from 'multer';
 import cloudinary from 'cloudinary';
 import { ServerResponse, IncomingMessage } from 'http';
+
+
+interface NextApiRequestWithMulter extends NextApiRequest {
+  files: Express.Multer.File[];
+}
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -18,10 +23,10 @@ export const config = {
   },
 };
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequestWithMulter, res: NextApiResponse) => {
   const multerAny = multer().any();
-  await new Promise((resolve, reject) =>
-    multerAny(req, res, (err) => (err ? reject(err) : resolve()))
+  await new Promise<void>((resolve, reject) =>
+    multerAny(req as any, res as any, (err) => (err ? reject(err) : resolve()))
   );
 
   if (req.method === 'POST') {

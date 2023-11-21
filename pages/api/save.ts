@@ -14,7 +14,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 
-  upload.any()(req, res, async (err) => {
+  upload.any()(req as any, res as any, async (err) => {
     // Multer errors
     if (err) {
       console.error(err);
