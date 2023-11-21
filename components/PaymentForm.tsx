@@ -10,7 +10,6 @@ type PaymentCartItem = {
   quantity: number;
   price: number; 
   type: 'Book' | 'Stationery';
-  price: number;
 };
 
 interface PaymentFormProps {

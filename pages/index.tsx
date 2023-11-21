@@ -100,10 +100,10 @@ const Index: React.FC<Props> = (props) => {
             <img src="/mcneese_bookstore_banner.png" alt="Banner 1" className="banner" />
           </div>
           <div>
-            <img src="/mcneese_bookstore_banner.png" alt="Banner 2" className="banner" />
+            <img src="/Banner2.png" alt="Banner 2" className="banner" />
           </div>
           <div>
-            <img src="/mcneese_bookstore_banner.png" alt="Banner 3" className="banner" />
+            <img src="/Banner3.png" alt="Banner 3" className="banner" />
           </div>
         </Slider>
         </div>
