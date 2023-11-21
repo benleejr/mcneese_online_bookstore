@@ -1,18 +1,28 @@
 // pages/ViewOrders.tsx
 
 import { useSession } from 'next-auth/react';
+import { Session } from 'next-auth'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/Layout';
 
+interface User {
+  name?: string;
+  email?: string;
+  image?: string;
+  id?: string;
+}
+
+interface ExtendedSession extends Session {
+  user?: User;
+}
+
 const ViewOrders = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession() as { data: ExtendedSession | null };
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    // @ts-ignore
     if (session?.user?.id) {
-      // @ts-ignore
       axios.get(`/api/userOrders?userId=${session.user.id}`) 
         .then(response => {
           const fetchedOrders = response.data;
