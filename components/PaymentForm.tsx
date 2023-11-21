@@ -8,7 +8,7 @@ type CartItem = {
   bookId?: string;
   stationeryId?: string;
   quantity: number;
-  price: number; // Added this line
+  price: number; 
   type: 'Book' | 'Stationery';
 };
 
