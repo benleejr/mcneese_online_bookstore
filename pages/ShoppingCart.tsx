@@ -20,14 +20,16 @@ const ShoppingCartPage = () => {
 
   const handleQuantityChange = (id: string, quantity: number) => {
     console.log('handleQuantityChange called:', id, quantity);
-    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity } });
+    let parsedQuantityNumber = parseInt(quantity);
+    if (isNaN(parsedQuantityNumber)) {
+      return;
+    }
+    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity: parsedQuantityNumber } });
   };
 
   const calculateTotal = () => {
     return state.cartItems.reduce((total, item) => total + item.price * item.quantity, 0); 
   };
-
-
 
   return (
     <CartProvider>
