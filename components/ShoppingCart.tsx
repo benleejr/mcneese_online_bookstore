@@ -14,8 +14,9 @@ const ShoppingCart = () => {
     dispatch({ type: 'DECREMENT', payload: { id } });
   };
 
-  const handleQuantityChange = (id: string, quantity: number) => {
-    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity } });
+  const handleQuantityChange = (id: string, quantity: string) => {
+    const parsedQuantity = parseInt(quantity, 10);
+    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity: parsedQuantity } });
   };
 
   const calculateTotal = () => {
@@ -40,7 +41,7 @@ const ShoppingCart = () => {
                 <input
                   type="number"
                   value={item.quantity}
-                  onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
+                  onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                   className="quantity-input"
                 />
                 <button onClick={() => handleIncrement(item.id)}>+</button>
