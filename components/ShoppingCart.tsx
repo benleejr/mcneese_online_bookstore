@@ -1,7 +1,12 @@
 // components/ShoppingCart.tsx
 
 import React from 'react';
-import { useCart } from '../pages/context/CartContext';
+import { useCart } from '../context/CartContext';
+
+type Action = 
+  | { type: 'INCREMENT'; payload: { id: string; } }
+  | { type: 'DECREMENT'; payload: { id: string; } }
+  | { type: 'SET_QUANTITY'; payload: { id: string; quantity: number; } };
 
 const ShoppingCart = () => {
   const { state, dispatch } = useCart();
@@ -14,8 +19,12 @@ const ShoppingCart = () => {
     dispatch({ type: 'DECREMENT', payload: { id } });
   };
 
-  const handleQuantityChange = (id: string, quantity: number) => {
-    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity } });
+  const handleQuantityChange = (id: string, quantity: string) => {
+    let parsedQuantityNumber = parseInt(quantity);
+    if (isNaN(parsedQuantityNumber)) {
+      return;
+    }
+    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity: parsedQuantityNumber } } as Action);
   };
 
   const calculateTotal = () => {
@@ -40,7 +49,7 @@ const ShoppingCart = () => {
                 <input
                   type="number"
                   value={item.quantity}
-                  onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
+                  onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                   className="quantity-input"
                 />
                 <button onClick={() => handleIncrement(item.id)}>+</button>

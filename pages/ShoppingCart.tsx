@@ -1,10 +1,15 @@
 // pages/ShoppingCart.tsx
 
 import React from 'react';
-import { CartProvider, useCart } from '../pages/context/CartContext';
+import { CartProvider, useCart } from '../context/CartContext';
 import Layout from "../components/Layout";
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+
+type Action = 
+  | { type: 'INCREMENT'; payload: { id: string; } }
+  | { type: 'DECREMENT'; payload: { id: string; } }
+  | { type: 'SET_QUANTITY'; payload: { id: string; quantity: number; } };
 
 const ShoppingCartPage = () => {
   const { state, dispatch } = useCart();
@@ -18,16 +23,22 @@ const ShoppingCartPage = () => {
     dispatch({ type: 'DECREMENT', payload: { id } });
   };
 
-  const handleQuantityChange = (id: string, quantity: number) => {
+  const handleQuantityChange = (id: string, quantity: string) => {
     console.log('handleQuantityChange called:', id, quantity);
-    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity } });
+    let parsedQuantityNumber = parseInt(quantity);
+    if (isNaN(parsedQuantityNumber)) {
+      return;
+    }
+    dispatch({ type: 'SET_QUANTITY', payload: { id, quantity: parsedQuantityNumber } });
+  };
+
+  const handleRemove = (id: string) => {
+    dispatch({ type: 'REMOVE_ITEM', payload: { id } });
   };
 
   const calculateTotal = () => {
     return state.cartItems.reduce((total, item) => total + item.price * item.quantity, 0); 
   };
-
-
 
   return (
     <CartProvider>
@@ -42,12 +53,13 @@ const ShoppingCartPage = () => {
                 <input
                   type="number"
                   value={state.cartItems.find(cartItem => cartItem.id === item.id)?.quantity || ''}
-                  onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
+                  onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                   className="quantity-input"
                 />
                 <button onClick={() => handleIncrement(item.id)}>+</button>
               </div>
               <span className="cart-item-price">${item.price.toFixed(2)}</span>
+              <button onClick={() => handleRemove(item.id)}>Remove</button>
             </div>            
           ))}
           <div className="total-price">

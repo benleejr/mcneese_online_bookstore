@@ -1,4 +1,5 @@
 // pages/api/auth/[...nextauth].ts
+import { NextApiHandler } from 'next';
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import GitHubProvider from 'next-auth/providers/github';
@@ -17,11 +18,11 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    session: async (session, token) => {
-      if (token?.sub) {
-        session.user.id = token.sub;
+    session: async ({ session, user }) => {
+      if (user?.id) {
+        session.user.id = user.id;
       }
-      return session;
+      return Promise.resolve(session);
     },
   },
 };

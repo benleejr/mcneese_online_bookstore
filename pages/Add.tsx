@@ -4,8 +4,13 @@ import Layout from '../components/Layout';
 import Router from 'next/router';
 import { useRef } from 'react';
 
+type FormData = {
+  availability?: boolean;
+  // include other form fields here
+};
+
 const Create: React.FC = () => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<FormData>({});
   const [type, setType] = useState('book');
   
   const primaryFileInputRef = useRef(null);
@@ -81,8 +86,6 @@ const Create: React.FC = () => {
       Object.keys(formData).forEach(key => {
         formDataObj.append(key, formData[key]);
       });
-
-      console.log([...formDataObj.entries()]);
 
       const saveResponse = await fetch('/api/save', {
           method: 'POST',

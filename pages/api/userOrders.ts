@@ -15,7 +15,7 @@ export default async function handle(req, res) {
 
     try {
       const orders = await prisma.order.findMany({
-        where: { userId: session.user.id },
+        where: { userId: (session.user as any).id },
       });
 
       if (orders) {

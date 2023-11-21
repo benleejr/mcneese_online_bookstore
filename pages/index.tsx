@@ -9,8 +9,37 @@ import NextArrow from '../components/NextArrow';
 import Link from 'next/link';
 
 type Props = {
-  randomBooks: any[];  // Adjust the type as needed
-  randomStationery: any[];  // Adjust the type as needed
+  randomBooks: {
+    id: string;
+    title: string;
+    author: string;
+    ISBN: string;
+    category: string;
+    price: number;
+    language: string;
+    availability: boolean;
+    primaryImageURL: string;
+    otherImageURLs: string[];
+    description: string;
+    publisher: string;
+    publishedYear: number;
+    stock: number;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  randomStationery: {
+    id: string;
+    name: string;
+    category: string;
+    price: number;
+    availability: boolean;
+    primaryImageURL: string;
+    otherImageURLs: string[];
+    description: string;
+    stock: number;
+    createdAt: string;
+    updatedAt: string;
+  }[];
 };
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -18,25 +47,26 @@ export const getStaticProps: GetStaticProps = async () => {
   let randomBooks = await prisma.book.findMany({
     take: 2,
     orderBy: {
-      id: 'asc',  // Adjust this line to fetch random books
+      id: 'asc',  
     },
   });
 
   let randomStationery = await prisma.stationery.findMany({
     take: 2,
     orderBy: {
-      id: 'asc',  // Adjust this line to fetch random stationery
+      id: 'asc',  
     },
   });
 
-  // Convert Date objects to strings
-  randomBooks = randomBooks.map(book => ({
+  // @ts-ignore
+  randomBooks = randomBooks.map((book) => ({
     ...book,
     createdAt: book.createdAt.toISOString(),
     updatedAt: book.updatedAt.toISOString(),
   }));
 
-  randomStationery = randomStationery.map(item => ({
+  // @ts-ignore
+  randomStationery = randomStationery.map((item) => ({
     ...item,
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
